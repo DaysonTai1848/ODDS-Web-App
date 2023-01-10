@@ -192,10 +192,11 @@
               type="button"
               class="btn-add-stock me-3 btn btn-outline-dark btn-rounded bg-white text-dark hover:bg-dark hover:text-white"
               data-bs-toggle="modal"
-              data-bs-target="#addStockModal"
+              id="addStockModalBtn"
             >
               Add Stock
             </button>
+
             <button
               type="button"
               class="btn btn-dark btn-rounded"
@@ -247,21 +248,13 @@
       </div>
     </div>
     <!-- Modal HTML -->
-    <div class="modal" tabindex="-1" role="dialog" id="addStockModal">
+    <!-- <div class="modal" tabindex="-1" role="dialog" id="addStockModal">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Add Stock</h5>
           </div>
           <div class="modal-body">
-            <!-- Product names container -->
-            <!-- <div id="productNamesContainer"></div> -->
-
-            <!-- Stock input field -->
-            <!-- <div class="form-group">
-              <label for="stockInput">Stock</label>
-              <input type="number" class="form-control" id="stockInput" />
-            </div> -->
             <table class="table">
               <thead>
                 <tr>
@@ -270,7 +263,6 @@
                 </tr>
               </thead>
               <tbody id="productNamesContainer">
-                <!-- Product rows will be added here -->
               </tbody>
             </table>
           </div>
@@ -285,6 +277,59 @@
             </button>
             <button type="button" class="btn btn-primary" id="saveButton">
               Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div> -->
+    <div
+      class="modal fade"
+      id="addStockModal"
+      tabindex="-1"
+      aria-labelledby="addStockModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addStockModalLabel">New message</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="add-stock-modal-content">
+              <div class="mb-3">
+                <label for="recipient-name" class="col-form-label"
+                  >Recipient:</label
+                >
+                <input type="text" class="form-control" id="recipient-name" />
+              </div>
+              <div class="mb-3">
+                <label for="message-text" class="col-form-label"
+                  >Message:</label
+                >
+                <textarea class="form-control" id="message-text"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="add-stock-submit-btn"
+            >
+              Submit
             </button>
           </div>
         </div>
@@ -406,39 +451,68 @@
                 style: "multi",
               },
             });
+
+            $("#addStockModalBtn").click(function () {
+              // console.log("table" + JSON.stringify(table));
+              // var data = table.rows({ selected: true }).data();
+              // console.log("data: " + JSON.stringify(data));
+              $("#add-stock-modal-content").empty();
+
+              // Get the data for the selected rows
+              var selectedData = table.rows(".selected").data();
+              var selectedProducts = $.map(selectedData, function (row) {
+                return {
+                  product_name: row.product_name,
+                  product_id: row.product_id,
+                };
+              });
+              // console.log(JSON.stringify(selectedProducts));
+              // alert(JSON.stringify(selectedProducts));
+
+              // loop through those product name, and create input field
+              selectedProducts.forEach(function (product) {
+                $("#add-stock-modal-content").append(
+                  `<div class="d-flex justify-content-between id=input-${product.product_id}">
+                    <p>${product.product_name}</p>
+                    <input type="number" class="form-control">
+                  </div>`
+                );
+              });
+
+              // Get the data for the selected rows
+              var selectedData = table.rows(".selected").data();
+              console.log(JSON.stringify(selectedData));
+
+              $("#addStockModal").modal("show");
+
+              // When the submit button is clicked
+              $("#add-stock-submit-btn").click(function () {
+                // Get the add_amount for each product
+                for (let i = 0; i < selectedProducts.length; i++) {
+                  let product = selectedProducts[i];
+                  let inputField = $(`#input-${product.product_id}`);
+                  let addAmount = inputField.val();
+                  product.add_amount = addAmount;
+                }
+
+                // // add the add_amount attribute to each product object
+                // const updatedSelectedProducts = selectedProducts.map(
+                //   (product) => {
+                //     const updatedProduct = {
+                //       ...product, // spread the existing product object
+                //       add_amount: $("#input-").val(), // add the new attribute
+                //     };
+                //     return updatedProduct;
+                //   }
+                // );
+
+                // Close modal
+                $("#addStockModal").modal("hide");
+                // alert(JSON.stringify(selectedProducts));
+                console.log(JSON.stringify(selectedProducts));
+              });
+            });
           },
-        });
-        $("#addStockModal").on("show.bs.modal", function (event) {
-          // Clear the product names container
-          $("#productNamesContainer").empty();
-          // Get the selected rows object
-          var rows = table.rows({ selected: true }).data();
-          // console.log("rows: " + JSON.stringify(rows));
-          var rowsData = Object.values(rows);
-          console.log("rows data: " + rowsData);
-
-          // Extract the product names from the selected rows
-          var productNames = rowsData.map(function (rows) {
-            return rows.name;
-          });
-          console.log("productNames: " + productNames);
-        });
-
-        // Handle the "Save" button click
-        $("#saveButton").click(function () {
-          // Get the value of the stock input field
-          var stock = $("#stockInput").val();
-
-          // Add the stock to the selected products
-          // ...
-
-          // Close the modal
-          $("#addStockModal").modal("hide");
-        });
-
-        // Handle the "Cancel" button click
-        $("#cancelButton").click(function () {
-          $("#addStockModal").modal("hide");
         });
       });
     </script>

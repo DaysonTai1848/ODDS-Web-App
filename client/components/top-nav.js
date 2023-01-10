@@ -12,7 +12,7 @@ class Topnav extends HTMLElement {
             height="24"
             class="d-inline-block align-text-top"
           /> -->
-          OODS Shop Management System
+          ODDS Shop Management System
         </a>
       </div>
     </nav>

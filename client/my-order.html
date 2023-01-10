@@ -259,6 +259,25 @@
         </div>
       </div>
     </div>
+
+    <div class="dropdown" id="order-status-dropdown" style="display: none">
+      <button
+        class="btn btn-secondary dropdown-toggle"
+        type="button"
+        id="dropdownMenuButton1"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Dropdown button
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+        <li><a class="dropdown-item">UNPAID</a></li>
+        <li><a class="dropdown-item">TO-PACK</a></li>
+        <li><a class="dropdown-item">TO-DELIVER</a></li>
+        <li><a class="dropdown-item">COMPLETED</a></li>
+        <li><a class="dropdown-item">CANCELLED</a></li>
+      </ul>
+    </div>
     <!-- Boostrap Popper -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
@@ -391,36 +410,6 @@
               },
             },
 
-            // {
-            //   targets: 1,
-            //   data: "products",
-            //   width: "20%",
-            //   className: "text-center",
-            //   render: function (data, type, row) {
-            //     // Extract the first item name
-            //     var itemName = data[0].name;
-
-            //     // Build the HTML for the dropdown button
-            //     var dropdownHtml =
-            //       '<div class="dropdown">' +
-            //       '<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-            //       itemName +
-            //       "</button>" +
-            //       '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
-
-            //     // Add the other item names to the dropdown menu
-            //     for (var i = 1; i < data.length; i++) {
-            //       dropdownHtml +=
-            //         '<a class="dropdown-item" href="#">' +
-            //         data[i].name +
-            //         "</a>";
-            //     } // Close the dropdown menu and div
-            //     dropdownHtml += "</div></div>";
-
-            //     // Return the HTML for the dropdown button
-            //     return dropdownHtml;
-            //   },
-            // },
             {
               targets: 2,
               data: "order_date",
@@ -438,12 +427,56 @@
               data: "order_status",
               width: "20%",
               className: "text-center",
+              render: function (data, type, row) {
+                // var orderStatusDropdown = $("#order-status-dropdown").clone();
+                var orderStatusDropdown = $("#order-status-dropdown").html();
+
+                return orderStatusDropdown;
+              },
             },
           ],
 
           css: {
             pagination: "custom-pagination", // class name
           },
+
+          success: function () {
+            alert("initComplete");
+            var table = $("#table").DataTable();
+            table.columns().every(function () {
+              var column = this;
+              if (column.index() === 3) {
+                //column "order_status" index
+                var statusText = {
+                  UNPAID: "Unpaid",
+                  "TO-PACK": "To-Pack",
+                  "TO-DELIVER": "To-Deliver",
+                  COMPLETED: "Completed",
+                  CANCELLED: "Cancelled",
+                };
+                column
+                  .data()
+                  .unique()
+                  .sort()
+                  .each(function (d, j) {
+                    var orderStatusDropdown = $("#order-status-dropdown");
+                    orderStatusDropdown.find("button").html(statusText[d]);
+                    orderStatusDropdown.find("input").val(d);
+                  });
+              }
+            });
+          },
+
+          // success: function () {
+          //   var statusText = {
+          //     UNPAID: "Unpaid",
+          //     "TO-PACK": "To-Pack",
+          //     "TO-DELIVER": "To-Deliver",
+          //     COMPLETED: "Completed",
+          //     CANCELLED: "Cancelled",
+          //   };
+
+          // },
         });
       });
     </script>

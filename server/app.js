@@ -349,25 +349,27 @@ app.get("/getCategories", async (req, res) => {
 // POST ONE PRODUCT - FOR ADD PRODUCT PAGE
 app.post("/postProduct", (req, res) => {
   // get the form data from the request body
+  const price = req.body.price;
   const product_name = req.body.product_name;
-  // const productDescription = req.body.productDescription;
-  // const variationId = req.body.variationId;
-  // const variationType = req.body.variationType;
-  // const variationPrice = req.body.variationPrice;
-  // const variationStock = req.body.variationStock;
+  const product_description = req.body.product_description;
+  const stock = req.body.stock;
+  const under_category = req.body.under_category;
 
-  // Get a reference to the test collection
-  const testCollection = db.collection("test-collection");
+  // image & owned by
+
+  // Get a reference to the products collection
+  const productsRef = db.collection("test-collection");
 
   // Get a list of cities from your database
-  testCollection.add({
-    id: "HEC-0002",
+  productsRef.doc("0001").set({
+    // price: Math.round(price * 100) / 100,
+    price: parseFloat(price),
+    product_description: product_description,
     product_name: product_name,
-    // product_description: productDescription,
-    // variation_id: variationId,
-    // variation_type: variationType,
-    // variation_price: variationPrice,
-    // variation_stock: variationStock,
+    // product_status: product_status,
+    sold_item: 0,
+    stock: parseFloat(stock),
+    under_category: under_category,
   });
 
   // send a response to the client
@@ -412,9 +414,9 @@ app.get("/getOrders", async (req, res) => {
 
       // order.push({ salesRevenue: sum });
 
-      console.log(
-        "dayjs " + dayjs(item.data().order_date).format("DD MMM YYYY")
-      );
+      // console.log(
+      //   "dayjs " + dayjs(item.data().order_date).format("DD MMM YYYY")
+      // );
 
       // Get the query snapshot for the products subcollection
       const productsSnapshot = await item.ref
@@ -536,6 +538,179 @@ app.get("/getOrderDetail", async (req, res) => {
   console.log(order);
 });
 
+// GET ALL ORDER - FOR MY ORDER PAGE
+app.get("/getProductRanking", async (req, res) => {
+  // Get a reference to the orders collection
+  const ordersRef = db.collection("order");
+
+  // Get the query snapshot for the orders collection
+  const ordersSnapshot = await ordersRef.get();
+  // console.log("Orders snapshot:", ordersSnapshot);
+
+  // Initialize an array to hold the order objects
+  const orders = [];
+
+  // Initialize a new array to hold the ordered products
+  let orderedProducts = [];
+
+  // variables to calculate product ranking
+  const productRanking = [];
+  let currentRank = 1;
+
+  // Wrap the loop in an async function
+  const addOrderData = async () => {
+    // Create an array of order promises
+    const orderPromises = ordersSnapshot.docs.map(async (item) => {
+      // Create an object for the order
+      const order = {
+        order_id: item.id,
+        delivery_method: item.data().delivery_method,
+        delivery_time: item.data().delivery_time,
+        order_amount: item.data().order_amount,
+        order_by: item.data().order_by,
+        order_date: dayjs(item.data().order_date.toDate().toISOString()).format(
+          "DD MMM YYYY"
+        ),
+        order_status: item.data().order_status,
+        payment_method: item.data().payment_method,
+        products: [],
+        address: [],
+        order_number: ordersSnapshot.size,
+      };
+
+      // order.push({ salesRevenue: sum });
+
+      // console.log(
+      //   "dayjs " + dayjs(item.data().order_date).format("DD MMM YYYY")
+      // );
+
+      // Get the query snapshot for the products subcollection
+      const productsSnapshot = await item.ref
+        .collection("ordered_product")
+        .get();
+
+      // Create an array of product promises
+      const productPromises = productsSnapshot.docs.map((product) => {
+        // Create a promise to add the product data to the products array
+        return new Promise((resolve) => {
+          // Create an object for the product
+          const productsData = {
+            sku: product.data().SKU,
+            price: product.data().price,
+            name: product.data().product_name,
+            quantity: product.data().quantity,
+          };
+
+          // Add the product object to the products array
+          order.products.push(productsData);
+
+          // Resolve the promise
+          resolve();
+        });
+      });
+
+      const addressSnapshot = await item.ref.collection("address").get();
+
+      const addressPromises = addressSnapshot.docs.map((address) => {
+        // Create a promise to add the product data to the products array
+        return new Promise((resolve) => {
+          // Create an object for the product
+          const addressData = {
+            address_id: address.id,
+            addr1: address.data().addr1,
+            addr2: address.data().addr2,
+            city: address.data().city,
+            postcode: address.data().postcode,
+            receiver_name: address.data().receiver_name,
+            receiver_tel: address.data().receiver_tel,
+            state: address.data().state,
+          };
+
+          // Add the product object to the products array
+          order.address.push(addressData);
+
+          // Resolve the promise
+          resolve();
+        });
+      });
+
+      // Wait for all of the product promises to resolve
+      await Promise.all(productPromises);
+      await Promise.all(addressPromises);
+      // console.log("productPromises" + productPromises);
+
+      // Return the order object
+      return order;
+    });
+
+    // Wait for all of the order promises to resolve
+    const resolvedOrders = await Promise.all(orderPromises);
+
+    // Add the resolved orders to the orders array
+    // orders.push(...resolvedOrders);
+
+    // Iterate over the resolved orders
+    for (const order of resolvedOrders) {
+      // Iterate over the products in each order
+      for (const product of order.products) {
+        // Check if the product already exists in the productRanking array
+        const existingProduct = productRanking.find(
+          (p) => p.sku === product.sku
+        );
+        if (existingProduct) {
+          // If the product already exists, update the sales and quantity for that product
+          existingProduct.sales += product.quantity * product.price;
+          existingProduct.quantity += product.quantity;
+        } else {
+          // If the product doesn't exist, create a new object for the product in the productRanking array
+          productRanking.push({
+            product_ranking: currentRank,
+            product_name: product.name,
+            sales: product.quantity * product.price,
+            quantity: product.quantity,
+          });
+          // Increment currentRank by 1
+          currentRank++;
+        }
+        // Create an object for the ordered product with the product name, quantity, and sales
+        let orderedProducts = {
+          sku: product.sku,
+          product_name: product.name,
+          quantity: product.quantity,
+          sales: product.quantity * product.price,
+        };
+
+        // console.log("productRanking" + productRanking);
+      }
+    }
+
+    // Now that you have an array of all the ordered products, you can sort it by sales and return the sorted array as the response
+  };
+
+  // Call the async function
+  await addOrderData();
+
+  // console.log(JSON.stringify(orderedProducts, null, 2));
+  // console.log("Number of orders:", orderedProducts.length);
+  // console.log("GET all orders successfully");
+
+  // console.log("orderedProduct" + orderedProducts);
+  // res.json(orderedProducts);
+
+  console.log(JSON.stringify(productRanking, null, 2));
+  console.log("Number of orders:", productRanking.length);
+  console.log("GET all orders successfully");
+
+  res.json(productRanking);
+});
+
 app.listen(3000, () => {
   console.log(`Server listening on port 3000`);
 });
+
+/**
+ * Steps to git push to github
+ * 1. git add .
+ * 2. git commit -m "message"
+ * 3. git push
+ */

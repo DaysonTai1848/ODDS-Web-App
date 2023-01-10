@@ -208,6 +208,24 @@
           <div class="p-5 h-50">
             <canvas id="myChart"></canvas>
           </div>
+          <div class="container d-flex flex-column p-0 mb-5">
+            <div class="container d-flex flex-row bg-dark p-4">
+              <h5 class="ms-2 text-white">Product Ranking</h3>
+            </div>
+            <div class="container bg-white border border-dark p-5" >
+              <table id="table" class="table table-bordered" style="width: 100%">
+                <thead>
+                  <tr>
+                    <!-- <th></th> -->
+                    <th>Ranking</th>
+                    <th>Product Name</th>
+                    <th>Sales</th>
+                    <th>Quantity</th>
+                  </tr>
+                </thead>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -251,6 +269,25 @@
         };
 
         var myChart = new Chart(document.getElementById("myChart"), config);
+
+        // initialize product ranking table
+        $("#table").DataTable({
+          ajax: {
+            url: "/getProductRanking",
+            dataSrc: "",
+          },
+          columns: [
+            // { data: "id" },
+            { data: "product_ranking" },
+            { data: "product_name" },
+            { data: "sales" },
+            { data: "quantity" },
+          ],
+          searching: false, 
+          paging: false,
+          info: false,
+        });
+        
       });
     </script>
   </body>
