@@ -31,9 +31,20 @@
       rel="stylesheet"
       href="https://cdn.datatables.net/select/1.5.0/css/select.dataTables.min.css"
     />
+    <style>
+      :root {
+        --purple: #4e457d;
+      }
+      .btn-primary {
+        background-color: var(--purple);
+      }
+      .bg-purple {
+        background-color: var(--purple);
+      }
+    </style>
   </head>
   <body class="h-100">
-    <nav class="navbar bg-dark">
+    <nav class="navbar bg-purple">
       <div class="container-fluid">
         <a class="navbar-brand text-light fw-bold" href="#">
           <!-- <img
@@ -176,7 +187,7 @@
         <hr />
         <div class="card m-4 p-5">
           <div
-            class="container p-5 mb-5 bg-dark d-flex flex-row justify-content-around"
+            class="container p-5 mb-5 bg-purple d-flex flex-row justify-content-around"
           >
             <a href="/my-order" class="d-flex flex-column text-decoration-none">
               <h2 class="text-white" id="unpaid-container"></h2>
@@ -206,7 +217,7 @@
             </a>
           </div>
           <div class="container d-flex flex-column p-0 mb-5">
-            <div class="container d-flex flex-row bg-dark p-4">
+            <div class="container d-flex flex-row bg-purple p-4">
               <h5 class="ms-2 text-white">Business Insight</h3>
             </div>
             <div class="container bg-white border border-dark p-5" >
@@ -214,7 +225,7 @@
             </div>
           </div>
           <!-- <div class="container d-flex flex-column p-0">
-            <div class="container d-flex flex-row bg-dark p-2">
+            <div class="container d-flex flex-row bg-purple p-2">
               <h5 class="ms-2 text-white">Shop Penalty</h3>
             </div>
             <div class="container bg-white"></div>

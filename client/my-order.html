@@ -30,6 +30,9 @@
       href="https://cdn.datatables.net/select/1.5.0/css/select.dataTables.min.css"
     />
     <style>
+      :root {
+        --purple: #4e457d;
+      }
       /* Style the selected button */
       .selected {
         background-color: #007bff;
@@ -39,12 +42,20 @@
       .custom-pagination .paginate_button {
         color: purple;
       }
+
+      .btn-primary {
+        background-color: var(--purple);
+        border: var(--purple);
+      }
+      .bg-purple {
+        background-color: var(--purple);
+      }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
   </head>
   <body class="h-100">
     <!-- Navbar Top -->
-    <nav class="navbar bg-dark">
+    <nav class="navbar bg-purple">
       <div class="container-fluid">
         <a class="navbar-brand text-light fw-bold" href="#">
           <!-- <img
@@ -262,7 +273,7 @@
 
     <div class="dropdown" id="order-status-dropdown" style="display: none">
       <button
-        class="btn btn-secondary dropdown-toggle"
+        class="btn btn-primary dropdown-toggle"
         type="button"
         id="dropdownMenuButton1"
         data-bs-toggle="dropdown"
@@ -391,7 +402,7 @@
                 // Build the HTML for the dropdown button
                 var dropdownHtml =
                   '<div class="dropdown">' +
-                  '<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="white-space: normal;">' +
+                  '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="white-space: normal;">' +
                   itemName +
                   "</button>" +
                   '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';

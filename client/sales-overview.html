@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sales Overview</title>
+    <!-- External CSS to Override Bootstrap -->
+    <link rel="stylesheet" href="./public/styles.css" type="text/css" crossorigin="anonymous"/>
     <!-- JQuery - always include this before other script file -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <!-- Boostrap CSS -->
@@ -31,10 +33,21 @@
       rel="stylesheet"
       href="https://cdn.datatables.net/select/1.5.0/css/select.dataTables.min.css"
     />
+    <style>
+      :root{
+        --purple: #4E457D;
+      }
+      .btn-primary {
+        background-color: var(--purple);
+      }
+      .bg-purple{
+        background-color: var(--purple);
+      }
+    </style>
   </head>
   <body class="h-100">
     <!-- Navbar Top -->
-    <nav class="navbar bg-dark">
+    <nav class="navbar bg-purple ">
       <div class="container-fluid">
         <a class="navbar-brand text-light fw-bold" href="#">
           <!-- <img
@@ -209,7 +222,7 @@
             <canvas id="myChart"></canvas>
           </div>
           <div class="container d-flex flex-column p-0 mb-5">
-            <div class="container d-flex flex-row bg-dark p-4">
+            <div class="container d-flex flex-row bg-purple p-4">
               <h5 class="ms-2 text-white">Product Ranking</h3>
             </div>
             <div class="container bg-white border border-dark p-5" >
@@ -276,12 +289,36 @@
             url: "/getProductRanking",
             dataSrc: "",
           },
-          columns: [
+          columnDefs: [
+            
             // { data: "id" },
-            { data: "product_ranking" },
-            { data: "product_name" },
-            { data: "sales" },
-            { data: "quantity" },
+            { 
+              targets: 0,
+              data: "product_ranking" 
+            },
+            { 
+              targets: 1,
+              data: "product_name",
+            },
+            // { data: "sales" },
+            {
+              targets: 2,
+              data: "sales",
+              // width: "20%",
+              // className: "text-center",
+              // render: function (data, type) {
+              //   // If display or filter data is requested, format the date
+              //   if (type === "display" || type === "filter") {
+              //     return "RM" + data.toFixed(2);
+              //   }
+              //   return data;
+              // },
+             
+            },
+            { 
+              targets: 3,
+              data: "quantity" 
+            },
           ],
           searching: false, 
           paging: false,

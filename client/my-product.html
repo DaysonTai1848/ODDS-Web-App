@@ -30,11 +30,23 @@
       rel="stylesheet"
       href="https://cdn.datatables.net/select/1.5.0/css/select.dataTables.min.css"
     />
+    <style>
+      :root {
+        --purple: #4e457d;
+      }
+      .btn-primary {
+        background-color: var(--purple);
+        border: var(--purple);
+      }
+      .bg-purple {
+        background-color: var(--purple);
+      }
+    </style>
   </head>
   <body class="h-100">
     <!-- <top-nav></top-nav>
     <script src="components/top-nav.js"></script> -->
-    <nav class="navbar bg-dark">
+    <nav class="navbar bg-purple">
       <div class="container-fluid">
         <a class="navbar-brand text-light fw-bold" href="#">
           <!-- <img
@@ -181,7 +193,7 @@
           >
             <!-- <button
               type="button"
-              class="me-3 btn btn-outline-dark btn-rounded bg-white text-dark hover:bg-dark hover:text-white"
+              class="me-3 btn btn-outline-dark btn-rounded bg-white text-dark hover:bg-purple hover:text-white"
               data-toggle="modal"
               data-target="#addStockModal"
             >
@@ -190,7 +202,7 @@
             <!-- Button to toggle the modal -->
             <button
               type="button"
-              class="btn-add-stock me-3 btn btn-outline-dark btn-rounded bg-white text-dark hover:bg-dark hover:text-white"
+              class="btn-add-stock me-3 btn btn-outline-dark btn-rounded bg-white text-dark hover:bg-purple hover:text-white"
               data-bs-toggle="modal"
               id="addStockModalBtn"
             >
@@ -199,7 +211,7 @@
 
             <button
               type="button"
-              class="btn btn-dark btn-rounded"
+              class="btn btn-primary btn-rounded"
               onclick="window.location.href = '/add-product';"
             >
               Add Product
@@ -319,7 +331,7 @@
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-secondary"
+              class="btn btn-outline-dark"
               data-bs-dismiss="modal"
             >
               Close

@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const router = express.Router();
 const path = require("path");
 const dayjs = require("dayjs");
 
@@ -9,6 +8,8 @@ const dayjs = require("dayjs");
 app.use(cors());
 app.use(express.json()); // Used to parse JSON bodies
 app.use(express.urlencoded()); //Parse URL-encoded bodies
+app.use(express.static(path.join(__dirname, "node_modules/bootstrap/dist/"))); // bootstrap
+app.use(express.static(path.join(__dirname, "../client/public")));
 
 // Initialize Firestore Database
 var admin = require("firebase-admin");
