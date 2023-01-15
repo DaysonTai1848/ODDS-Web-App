@@ -52,6 +52,14 @@
       }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+    <!-- Bootstrap datepicker plugin -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <!-- Bootstrap datepicker plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
   </head>
   <body class="h-100">
     <!-- Navbar Top -->
@@ -190,7 +198,7 @@
         <div class="container m-2">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="#">Order</a></li>
+              <li class="breadcrumb-item">Order</li>
               <li class="breadcrumb-item active" aria-current="page">
                 My Order
               </li>
@@ -201,6 +209,22 @@
 
         <hr />
         <div class="card m-4 p-5">
+          <!-- Date Picker -->
+          <div class="date-picker d-flex flex-row align-self-end mb-4">
+            <p class="me-3 fs-5">From:</p>
+            <input
+              type="text"
+              id="datepicker-start"
+              class="form-control h-50 me-3"
+            />
+            <p class="me-3 fs-5">To:</p>
+            <input
+              type="text"
+              id="datepicker-end"
+              class="form-control h-50 me-3"
+            />
+            <button class="btn btn-primary h-50">Apply</button>
+          </div>
           <!-- 6 Status of Order -->
           <!-- <div class="btn-group" role="group" aria-label="Status Selection">
             <div class="btn-group" role="group" aria-label="Status Selection">
@@ -319,18 +343,32 @@
           }
         });
 
-        // Create date inputs
-        minDate = new DateTime($("#min"), {
-          format: "MMMM Do YYYY",
+        // Initialize start datepicker
+        $(document).ready(function () {
+          $("#datepicker-start").datepicker({
+            format: "yyyy-mm-dd",
+          });
         });
-        maxDate = new DateTime($("#max"), {
-          format: "MMMM Do YYYY",
+        // Initialize end datepicker
+        $(document).ready(function () {
+          $("#datepicker-end").datepicker({
+            format: "yyyy-mm-dd",
+          });
         });
-
-        // // Apply the filter to the table
-        // if (orderStatus !== "all") {
-        //   table.column(1).search(orderStatus).draw();
-        // }
+        // Get value of start date
+        $("#datepicker-start")
+          .datepicker()
+          .on("changeDate", function (e) {
+            console.log(e.format());
+            // alert("Start Date: " + e.format());
+            // format -> 01/31/2023
+          });
+        $("#datepicker-end")
+          .datepicker()
+          .on("changeDate", function (e) {
+            console.log(e.format());
+            // alert("End Date: " + e.format());
+          });
 
         // Add a click event listener to the buttons
         $(".btn").click(function () {
@@ -432,6 +470,17 @@
               data: "order_amount",
               width: "20%",
               className: "text-center",
+              render: function (data, type, row) {
+                // If display or filter data is requested, format the date
+                if (type === "display" || type === "filter") {
+                  return "RM" + parseFloat(data).toFixed(2);
+                }
+
+                // Otherwise the data type requested (`type`) is type detection or
+                // sorting data, for which we want to use the integer, so just return
+                // that, unaltered
+                return data;
+              },
             },
             {
               targets: 4,

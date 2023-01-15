@@ -35,6 +35,11 @@ app.get("/my-product", (req, res) => {
   res.sendFile(path.resolve(__dirname, "../client/my-product.html"));
 });
 
+// EDIT PRODUCT DETAIL PAGE
+app.get("/product-detail", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../client/product-detail.html"));
+});
+
 // ADD NEW PRODUCT PAGE
 app.get("/add-product", (req, res) => {
   res.sendFile(path.resolve(__dirname, "../client/add-product.html"));
@@ -350,6 +355,38 @@ app.get("/getCategories", async (req, res) => {
 // POST ONE PRODUCT - FOR ADD PRODUCT PAGE
 app.post("/postProduct", (req, res) => {
   // get the form data from the request body
+  const price = req.body.price;
+  const product_name = req.body.product_name;
+  const product_description = req.body.product_description;
+  const stock = req.body.stock;
+  const under_category = req.body.under_category;
+
+  // image & owned by
+
+  // Get a reference to the products collection
+  const productsRef = db.collection("test-collection");
+
+  // Get a list of cities from your database
+  productsRef.doc("0001").set({
+    // price: Math.round(price * 100) / 100,
+    price: parseFloat(price),
+    product_description: product_description,
+    product_name: product_name,
+    // product_status: product_status,
+    sold_item: 0,
+    stock: parseFloat(stock),
+    under_category: under_category,
+  });
+
+  // send a response to the client
+  console.log("Form submitted successfully");
+  res.send("Form submitted successfully");
+});
+
+// POST ONE ORDER - FOR EDIT ORDER PAGE
+app.post("/postOrder", (req, res) => {
+  // get the form data from the request body
+  const order_id = req.body.order_id;
   const price = req.body.price;
   const product_name = req.body.product_name;
   const product_description = req.body.product_description;

@@ -304,7 +304,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="addStockModalLabel">New message</h5>
+            <h5 class="modal-title" id="addStockModalLabel">Add Stock</h5>
             <button
               type="button"
               class="btn-close"
@@ -408,6 +408,25 @@
                   data: "product_id",
                   width: 200,
                   className: "text-center",
+                  render: function (data, type) {
+                    var link = $("<a></a>")
+                      .text(data)
+                      .attr("href", "/product-detail?product_id=" + data);
+                    // apply the default style
+                    link.css({
+                      color: "black",
+                      "text-decoration": "none",
+                    });
+                    // apply the hover effect
+                    link
+                      .mouseenter(function () {
+                        link.css("color", "blue");
+                      })
+                      .mouseleave(function () {
+                        link.css("color", "");
+                      });
+                    return link[0].outerHTML; // return the link as the cell content
+                  },
                 },
                 {
                   targets: 2,
@@ -481,12 +500,27 @@
               // console.log(JSON.stringify(selectedProducts));
               // alert(JSON.stringify(selectedProducts));
 
+              $("#add-stock-modal-content").append(
+                `<div class="d-flex justify-content-between">
+                    <div class="w-75">
+                      <p class="fw-bold">Product Name</p>
+                    </div>
+                    <div class="w-25">
+                      <p class="fw-bold">Add Amount</p>
+                    </div>
+                  </div>`
+              );
+
               // loop through those product name, and create input field
               selectedProducts.forEach(function (product) {
                 $("#add-stock-modal-content").append(
                   `<div class="d-flex justify-content-between id=input-${product.product_id}">
-                    <p>${product.product_name}</p>
-                    <input type="number" class="form-control">
+                    <div class="w-75">
+                      <p>${product.product_name}</p>
+                    </div>
+                    <div class="w-25">
+                      <input type="number" class="form-control">
+                    </div>
                   </div>`
                 );
               });
