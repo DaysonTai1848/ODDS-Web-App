@@ -10,6 +10,7 @@ app.use(express.json()); // Used to parse JSON bodies
 app.use(express.urlencoded()); //Parse URL-encoded bodies
 app.use(express.static(path.join(__dirname, "node_modules/bootstrap/dist/"))); // bootstrap
 app.use(express.static(path.join(__dirname, "../client/public")));
+app.use(express.static("/resource", path.join(__dirname, "./public")));
 
 // Initialize Firestore Database
 var admin = require("firebase-admin");
@@ -440,9 +441,10 @@ app.get("/getOrders", async (req, res) => {
         delivery_time: item.data().delivery_time,
         order_amount: item.data().order_amount,
         order_by: item.data().order_by,
-        order_date: dayjs(item.data().order_date.toDate().toISOString()).format(
-          "DD MMM YYYY"
-        ),
+        // order_date: dayjs(item.data().order_date.toDate().toISOString()).format(
+        //   "DD MMM YYYY"
+        // ),
+        order_date: item.data().order_date,
         order_status: item.data().order_status,
         payment_method: item.data().payment_method,
         products: [],
@@ -470,6 +472,7 @@ app.get("/getOrders", async (req, res) => {
             sku: product.id,
             name: product.data().product_name,
             quantity: product.data().quantity,
+            price: product.data().price,
           };
 
           // Add the product object to the products array
@@ -524,9 +527,9 @@ app.get("/getOrders", async (req, res) => {
   // Call the async function
   await addOrderData();
 
-  console.log(JSON.stringify(orders, null, 2));
-  console.log("Number of orders:", orders.length);
-  console.log("GET all orders successfully");
+  // console.log(JSON.stringify(orders, null, 2));
+  // console.log("Number of orders:", orders.length);
+  // console.log("GET all orders successfully");
 
   res.json(orders);
 });
@@ -573,7 +576,7 @@ app.get("/getOrderDetail", async (req, res) => {
   // Return the order object
   // res.sendFile(path.resolve(__dirname, "../client/order-detail.html"));`
   res.json(order);
-  console.log(order);
+  // console.log(order);
 });
 
 // GET ALL ORDER - FOR MY ORDER PAGE

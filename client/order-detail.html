@@ -193,6 +193,7 @@
               >
               <div class="col-sm-10">
                 <input
+                  id="order_id"
                   name="order_id"
                   type="text"
                   class="form-control"
@@ -231,6 +232,7 @@
               <div class="col-sm-10">
                 <div class="form-group">
                   <input
+                    id="delivery_time"
                     class="form-control"
                     type="datetime-local"
                     id="datetime-local"
@@ -245,6 +247,7 @@
               >
               <div class="col-sm-10">
                 <input
+                  id="customer_email"
                   name="customer-email"
                   type="text"
                   class="form-control"
@@ -258,6 +261,7 @@
               >
               <div class="col-sm-10">
                 <input
+                  id="customer_name"
                   name="customer-name"
                   type="text"
                   class="form-control"
@@ -272,6 +276,7 @@
               >
               <div class="col-sm-10">
                 <input
+                  id="customer_phone"
                   name="customer-phone"
                   type="text"
                   class="form-control"
@@ -288,6 +293,7 @@
               <div class="col-sm-10">
                 <div class="form-group">
                   <input
+                    id="order_date"
                     class="form-control"
                     type="date"
                     id="date"
@@ -347,6 +353,7 @@
               >
               <div class="col-sm-10">
                 <input
+                  id="addr1"
                   name="addr1"
                   type="text"
                   class="form-control"
@@ -358,6 +365,7 @@
               <label class="col-sm-2 col-form-label"></label>
               <div class="col-sm-10">
                 <input
+                  id="addr2"
                   name="addr2"
                   type="text"
                   class="form-control"
@@ -369,6 +377,7 @@
               <label class="col-sm-2 col-form-label"></label>
               <div class="col-sm-10">
                 <input
+                  id="city"
                   name="city"
                   type="text"
                   class="form-control"
@@ -380,6 +389,7 @@
               <label class="col-sm-2 col-form-label"></label>
               <div class="col-sm-10">
                 <input
+                  id="postcode"
                   name="postcode"
                   type="number"
                   class="form-control"
@@ -420,7 +430,33 @@
                 </div>
               </div>
             </div>
-            <hr />
+            <div class="form-group row mb-5 mt-3">
+              <label for="products" class="col-sm-2 col-form-label"
+                >Products</label
+              >
+              <div class="col-sm-10">
+                <table
+                  id="table"
+                  class="table table-bordered"
+                  style="width: 100%"
+                >
+                  <thead>
+                    <tr>
+                      <th>SKU</th>
+                      <th>Product Name</th>
+                      <th>Quantity</th>
+                      <th>Subtotal</th>
+                    </tr>
+                  </thead>
+                  <!-- <tfoot>
+                    <tr>
+                      <th colspan="3">Total</th>
+                      <th id="footer-total"></th>
+                    </tr>
+                  </tfoot> -->
+                </table>
+              </div>
+            </div>
 
             <!-- <label class="form-label" for="customFile"></label> -->
 
@@ -529,5 +565,83 @@
       type="text/javascript"
       src="https://cdn.datatables.net/v/bs5/dt-1.13.1/date-1.2.0/sb-1.4.0/sl-1.5.0/datatables.min.js"
     ></script>
+    <script>
+      $(document).ready(function () {
+        // GET DATA FROM ORDER API
+        fetch("/getOrders")
+          .then((response) => response.json())
+          .then((data) => {
+            let searchParams = new URLSearchParams(window.location.search);
+
+            let order_id = searchParams.get("order_id");
+
+            let filteredData = data.filter(function (order) {
+              return order.order_id == order_id;
+            });
+            let order = filteredData[0];
+            console.log(JSON.stringify(order));
+
+            // Display the order details on your website
+            $("#order_id").val(order.order_id);
+            $("#delivery_time").val(order.delivery_time);
+            $("#customer_email").val(order.order_by);
+            $("#customer_name").val(order.address.receiver_name);
+            $("#customer_phone").val(order.address.receiver_tel);
+            $("#order_date").val(order.order_date);
+            $("#addr1").val(order.address.addr1);
+            $("#addr2").val(order.address.addr2);
+
+            $("#postcode").val(order.address.postcode);
+            $("#city").val(order.address.city);
+
+            // $("delivery_method").text(order.delivery_method);
+
+            // Display the ordered products on your website
+            let table = $("#table").DataTable({
+              data: order.products,
+              columnDefs: [
+                {
+                  target: 0,
+                  data: "sku",
+                },
+                { target: 1, data: "name" },
+                { target: 2, data: "quantity" },
+                {
+                  target: 3,
+                  data: null,
+
+                  render: function (data, type, row) {
+                    // If display or filter data is requested, format the date
+                    if (type === "display" || type === "filter") {
+                      return "RM" + (row.quantity * row.price).toFixed(2);
+                    }
+
+                    // Otherwise the data type requested (`type`) is type detection or
+                    // sorting data, for which we want to use the integer, so just return
+                    // that, unaltered
+                    return row.quantity * row.price;
+                  },
+                },
+              ],
+              searching: false,
+              paging: false,
+              info: false,
+              sort: false,
+            });
+            // let total = 0;
+            // order.products.forEach(function (product) {
+            //   total += product.subtotal;
+            // });
+            let sum = table
+              .column(3)
+              .data()
+              .reduce(function (a, b) {
+                return a + b;
+              }, 0);
+            // $("#footer-total").text(JSON.stringify(sum));
+          })
+          .catch((error) => console.error(error));
+      });
+    </script>
   </body>
 </html>

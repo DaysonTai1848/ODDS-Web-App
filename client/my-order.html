@@ -60,6 +60,8 @@
     />
     <!-- Bootstrap datepicker plugin -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <!-- Dayjs -->
+    <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
   </head>
   <body class="h-100">
     <!-- Navbar Top -->
@@ -223,7 +225,9 @@
               id="datepicker-end"
               class="form-control h-50 me-3"
             />
-            <button class="btn btn-primary h-50">Apply</button>
+            <button id="apply-filter-btn" class="btn btn-primary h-50">
+              Apply
+            </button>
           </div>
           <!-- 6 Status of Order -->
           <!-- <div class="btn-group" role="group" aria-label="Status Selection">
@@ -327,6 +331,9 @@
     <!-- Execute Script -->
 
     <script>
+      // import dayjs from "dayjs";
+      // var dayjs = require("dayjs");
+
       $(document).ready(function () {
         // Get the current URL
         const url = new URL(window.location.href);
@@ -344,17 +351,15 @@
         });
 
         // Initialize start datepicker
-        $(document).ready(function () {
-          $("#datepicker-start").datepicker({
-            format: "yyyy-mm-dd",
-          });
+        $("#datepicker-start").datepicker({
+          format: "yyyy-mm-dd",
         });
+
         // Initialize end datepicker
-        $(document).ready(function () {
-          $("#datepicker-end").datepicker({
-            format: "yyyy-mm-dd",
-          });
+        $("#datepicker-end").datepicker({
+          format: "yyyy-mm-dd",
         });
+
         // Get value of start date
         $("#datepicker-start")
           .datepicker()
@@ -370,28 +375,8 @@
             // alert("End Date: " + e.format());
           });
 
-        // Add a click event listener to the buttons
-        $(".btn").click(function () {
-          // Remove the selected class from all buttons
-          $(".btn").removeClass("selected");
-          // Add the selected class to the button that was just clicked
-          $(this).addClass("selected");
-
-          console.log("Button clicked");
-          // Get the text of the clicked button
-          const status = $(this).text();
-
-          // Apply the filter to the table
-          if (status !== "all") {
-            table.column(1).search(status).draw();
-          } else {
-            // Clear the filter if "all" is selected
-            table.search("").columns().search("").draw();
-          }
-        });
-
         // Initialize DataTables
-        $("#table").DataTable({
+        var table = $("#table").DataTable({
           ajax: {
             url: "/getOrders",
             dataSrc: "",
@@ -432,30 +417,19 @@
             {
               targets: 1,
               data: "products",
-              width: "0%",
+              width: "40%",
               className: "text-center",
               render: function (data, type, row) {
-                // Extract the first item name
-                var itemName = data[0].name;
-                // Build the HTML for the dropdown button
-                var dropdownHtml =
-                  '<div class="dropdown">' +
-                  '<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="white-space: normal;">' +
-                  itemName +
-                  "</button>" +
-                  '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
-
-                // Add the other item names to the dropdown menu
-                for (var i = 1; i < data.length; i++) {
-                  dropdownHtml +=
-                    '<a class="dropdown-item" href="#" style="white-space: normal;">' +
-                    data[i].name +
-                    "</a>";
-                } // Close the dropdown menu and div
-                dropdownHtml += "</div></div>";
-
-                // Return the HTML for the dropdown button
-                return dropdownHtml;
+                let container = $("<div>").css({
+                  display: "flex",
+                  flexDirection: "column",
+                });
+                let arr = data;
+                arr.forEach(function (item) {
+                  let p = $("<p>").text(item.name);
+                  container.append(p);
+                });
+                return container.prop("outerHTML");
               },
             },
 
@@ -464,6 +438,15 @@
               data: "order_date",
               width: "20%",
               className: "text-center",
+              render: function (data, type, row) {
+                // If display or filter data is requested, format the date
+                if (type === "display" || type === "filter") {
+                  var timestamp = data._seconds;
+                  var date = new Date(timestamp * 1000);
+                  return dayjs(date).format("DD MMM YYYY");
+                }
+                return data;
+              },
             },
             {
               targets: 3,
@@ -538,6 +521,43 @@
 
           // },
         });
+
+        // Add event listener for button click
+        $("#apply-filter-btn").on("click", function () {
+          // alert("Apply Filter");
+          // if (typeof dayjs !== "undefined") {
+          //   alert("dayjs is imported");
+          // } else {
+          //   alert("dayjs is not imported");
+          // }
+          // Get start and end dates from inputs
+          var startDate = dayjs($("#datepicker-start").val()).valueOf();
+          var endDate = dayjs($("#datepicker-end").val()).valueOf();
+          // alert(startDate); // Sat, 31 Dec 2022 16:00:00 GMT
+          // alert(endDate); // Mon, 30 Jan 2023 16:00:00 GMT
+
+          // Define the search function to filter by date range
+          // $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+          //   var orderDate = dayjs(data[2], "DD MMM YYYY"); // Assumes order date is in 3th column
+          //   alert("orderDate: " + orderDate); // 1673712000000 OR 2023年1月15日星期日凌晨12点00分 GMT+08:00
+          //   return orderDate.isBetween(startDate, endDate);
+          // });
+
+          var searchString = startDate + "-" + endDate;
+          table.search(searchString).draw();
+
+          // Redraw the DataTable with the updated search function
+          // table.draw();
+
+          // Remove the search function after it's been used
+          // $.fn.dataTable.ext.search.pop();
+        });
+
+        // $("#apply-filter-btn").on("click", function () {
+        //   // Redraw the DataTable with the updated search function
+        //   alert("Redraw");
+        //   // table.draw();
+        // });
       });
     </script>
   </body>
