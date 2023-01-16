@@ -21,10 +21,103 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
+const auth = admin.auth();
+
+app.post("/register", async (req, res) => {
+  const seller_name = req.body.seller_name;
+  const seller_email = req.body.seller_email;
+  const seller_username = req.body.seller_username;
+  const seller_password = req.body.seller_password;
+
+  const shop_name = req.body.shop_name;
+  const shop_rating = 0.0;
+  const shop_tel = req.body.shop_tel;
+  const shop_open = req.body.shop_open;
+  const shop_close = req.body.shop_close;
+  const shop_addr1 = req.body.shop_addr1;
+  const shop_addr2 = req.body.shop_addr2;
+  const shop_city = req.body.shop_city;
+  const shop_postcode = req.body.shop_postcode;
+  const shop_state = req.body.shop_state;
+  const shop_latitude = req.body.shop_latitude;
+  const shop_longitude = req.body.shop_longitude;
+
+  try {
+    const { user } = await auth.createUser({
+      email: seller_email,
+      password: seller_password,
+      displayName: seller_username,
+    });
+
+    const shopRef = db.collection("shop");
+    const currentCount = (await shopRef.get()).size;
+    let count = currentCount;
+    count++;
+    let shopid = "SH0000" + count;
+
+    // Insert additional data into Firestore
+    await db.collection("seller").doc(seller_email).set({
+      seller_name: seller_name,
+      seller_username: seller_username,
+      seller_email: seller_email,
+      seller_password: seller_password,
+    });
+
+    // Insert additional data into Firestore
+    await db.collection("shop").doc(shopid).set({
+      shop_owner: seller_name,
+      shop_name: shop_name,
+      shop_rating: shop_rating,
+      shop_tel: shop_tel,
+      shop_open: shop_open,
+      shop_close: shop_close,
+      shop_addr1: shop_addr1,
+      shop_addr2: shop_addr2,
+      shop_city: shop_city,
+      shop_postcode: shop_postcode,
+      shop_state: shop_state,
+      shop_latitude: shop_latitude,
+      shop_longitude: shop_longitude,
+    });
+
+    res.send("User registered successfully!");
+    res.sendFile(path.resolve(__dirname, "../client/login.html"));
+  } catch (error) {
+    res.send("Error: " + error);
+  }
+});
+
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  admin
+    .auth()
+    .signInWithEmailAndPassword(email, password)
+    .then(() => {
+      // Successful login, redirect to home page or other protected page
+      res.send("User registered successfully!");
+      //res.redirect("/home");
+    })
+    .catch((error) => {
+      // Error logging in, send error message to the client
+      res.status(401).send(error.message);
+    });
+});
+
 // URL routing - exact match with browser url
 app.get("/", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "../client/add-product.html"));
+  //res.sendFile(path.resolve(__dirname, "../client/dashboard.html"));
+  res.sendFile(path.resolve(__dirname, "../client/register.html"));
 });
+
+// LOGIN PAGE
+app.get("/login", function (req, res) {
+  res.sendFile(path.resolve(__dirname, "../client/login.html"));
+});
+
+// URL routing - exact match with browser url
+// app.get("/", (req, res) => {
+//   res.sendFile(path.resolve(__dirname, "../client/add-product.html"));
+// });
 
 // DASHBOARD PAGE
 app.get("/dashboard", (req, res) => {
