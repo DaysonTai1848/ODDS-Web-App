@@ -10,7 +10,7 @@ app.use(express.json()); // Used to parse JSON bodies
 app.use(express.urlencoded()); //Parse URL-encoded bodies
 app.use(express.static(path.join(__dirname, "node_modules/bootstrap/dist/"))); // bootstrap
 app.use(express.static(path.join(__dirname, "../client/public")));
-app.use(express.static("/resource", path.join(__dirname, "./public")));
+app.use(express.static(path.join(__dirname, "../client/web_icon")));
 
 // Initialize Firestore Database
 var admin = require("firebase-admin");
