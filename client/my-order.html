@@ -326,12 +326,14 @@
               type="text"
               id="datepicker-start"
               class="form-control h-50 me-3"
+              autocomplete="off"
             />
             <p class="me-3 fs-5">To:</p>
             <input
               type="text"
               id="datepicker-end"
               class="form-control h-50 me-3"
+              autocomplete="off"
             />
             <button id="apply-filter-btn" class="btn btn-primary h-50">
               Apply
@@ -407,9 +409,114 @@
       </div>
     </div>
 
+    <div id="unpaid-dropdown" style="display: none">
+      <div class="dropdown">
+        <button
+          class="btn bg-danger text-white fw-bold dropdown-toggle"
+          type="button"
+          id="dropdownMenuButton1"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          Unpaid
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+          <li><a class="dropdown-item">UNPAID</a></li>
+          <li><a class="dropdown-item">TO-PACK</a></li>
+          <li><a class="dropdown-item">TO-DELIVER</a></li>
+          <li><a class="dropdown-item">COMPLETED</a></li>
+          <li><a class="dropdown-item">CANCELLED</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="to-pack-dropdown" style="display: none">
+      <div class="dropdown">
+        <button
+          class="btn bg-warning text-white fw-bold dropdown-toggle"
+          type="button"
+          id="dropdownMenuButton1"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          To-Pack
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+          <li><a class="dropdown-item">UNPAID</a></li>
+          <li><a class="dropdown-item">TO-PACK</a></li>
+          <li><a class="dropdown-item">TO-DELIVER</a></li>
+          <li><a class="dropdown-item">COMPLETED</a></li>
+          <li><a class="dropdown-item">CANCELLED</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="to-deliver-dropdown" style="display: none">
+      <div class="dropdown">
+        <button
+          class="btn bg-info text-white fw-bold dropdown-toggle"
+          type="button"
+          id="dropdownMenuButton1"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          To-Deliver
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+          <li><a class="dropdown-item">UNPAID</a></li>
+          <li><a class="dropdown-item">TO-PACK</a></li>
+          <li><a class="dropdown-item">TO-DELIVER</a></li>
+          <li><a class="dropdown-item">COMPLETED</a></li>
+          <li><a class="dropdown-item">CANCELLED</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="completed-dropdown" style="display: none">
+      <div class="dropdown">
+        <button
+          class="btn bg-success text-white fw-bold dropdown-toggle"
+          type="button"
+          id="dropdownMenuButton1"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          Completed
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+          <li><a class="dropdown-item">UNPAID</a></li>
+          <li><a class="dropdown-item">TO-PACK</a></li>
+          <li><a class="dropdown-item">TO-DELIVER</a></li>
+          <li><a class="dropdown-item">COMPLETED</a></li>
+          <li><a class="dropdown-item">CANCELLED</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="cancelled-dropdown" style="display: none">
+      <div class="dropdown">
+        <button
+          class="btn bg-secondary text-white fw-bold dropdown-toggle"
+          type="button"
+          id="dropdownMenuButton1"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          Cancelled
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+          <li><a class="dropdown-item">UNPAID</a></li>
+          <li><a class="dropdown-item">TO-PACK</a></li>
+          <li><a class="dropdown-item">TO-DELIVER</a></li>
+          <li><a class="dropdown-item">COMPLETED</a></li>
+          <li><a class="dropdown-item">CANCELLED</a></li>
+        </ul>
+      </div>
+    </div>
+
     <div class="dropdown" id="order-status-dropdown" style="display: none">
       <button
-        class="btn btn-primary dropdown-toggle"
+        class="btn dropdown-toggle"
         type="button"
         id="dropdownMenuButton1"
         data-bs-toggle="dropdown"
@@ -470,11 +577,13 @@
         // Initialize start datepicker
         $("#datepicker-start").datepicker({
           format: "dd MM yyyy",
+          orientation: "bottom",
         });
 
         // Initialize end datepicker
         $("#datepicker-end").datepicker({
           format: "dd MM yyyy",
+          orientation: "bottom",
         });
 
         // Initialize DataTables
@@ -576,8 +685,29 @@
               render: function (data, type, row) {
                 // var orderStatusDropdown = $("#order-status-dropdown").clone();
                 var orderStatusDropdown = $("#order-status-dropdown").html();
-
-                return orderStatusDropdown;
+                var unpaidDropdown = $("#unpaid-dropdown").html();
+                var toDeliverDropdown = $("#to-deliver-dropdown").html();
+                var toPackDropdown = $("#to-pack-dropdown").html();
+                var completedDropdown = $("#completed-dropdown").html();
+                var cancelledDropdown = $("#cancelled-dropdown").html();
+                if (type === "display") {
+                  if (data == "UNPAID") {
+                    return unpaidDropdown;
+                  }
+                  if (data == "TO-PACK") {
+                    return toPackDropdown;
+                  }
+                  if (data == "TO-DELIVER") {
+                    return toDeliverDropdown;
+                  }
+                  if (data == "COMPLETED") {
+                    return completedDropdown;
+                  }
+                  if (data == "CANCELLED") {
+                    return cancelledDropdown;
+                  }
+                }
+                return data;
               },
             },
           ],
@@ -624,6 +754,15 @@
 
           // },
         });
+
+        // Get the value of the "filter" parameter from the URL
+        let urlParams = new URLSearchParams(location.search);
+        let filterValue = urlParams.get("filter");
+
+        if (filterValue) {
+          // Use the value to filter the table
+          table.search(filterValue).draw();
+        }
 
         $("#apply-filter-btn").on("click", function () {
           // Get start and end dates from datepickers

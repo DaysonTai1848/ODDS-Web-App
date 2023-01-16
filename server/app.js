@@ -365,10 +365,10 @@ app.post("/postProduct", (req, res) => {
   // image & owned by
 
   // Get a reference to the products collection
-  const productsRef = db.collection("test-collection");
+  const productsRef = db.collection("products");
 
   // Get a list of cities from your database
-  productsRef.doc("0001").set({
+  productsRef.doc("DAP-0001").set({
     // price: Math.round(price * 100) / 100,
     price: parseFloat(price),
     product_description: product_description,

@@ -222,30 +222,30 @@
           <div
             class="container p-5 mb-5 bg-purple d-flex flex-row justify-content-around"
           >
-            <a href="/my-order" class="d-flex flex-column text-decoration-none">
-              <h2 class="text-white" id="unpaid-container"></h2>
+            <a href="/my-order?filter=unpaid" class="d-flex flex-column text-decoration-none">
+              <h2 class="text-white ms-3" id="unpaid-container"></h2>
               <p class="text-white">UNPAID</p>
             </a>
-            <a href="/my-order" class="d-flex flex-column text-decoration-none">
-              <h2 class="text-white" id="to-pack-container"></h2>
+            <a href="/my-order?filter=to-pack" class="d-flex flex-column text-decoration-none">
+              <h2 class="text-white ms-3" id="to-pack-container"></h2>
               <p class="text-white">TO-PACK</p> </a
             ><a
-              href="/my-order"
+              href="/my-order?filter=to-deliver"
               class="d-flex flex-column text-decoration-none"
             >
-              <h2 class="text-white" id="to-deliver-container"></h2>
+              <h2 class="text-white ms-4" id="to-deliver-container"></h2>
               <p class="text-white">TO-DELIVER</p> </a
             ><a
-              href="/my-order"
+              href="/my-order?filter=completed"
               class="d-flex flex-column text-decoration-none"
             >
-              <h2 class="text-white" id="completed-container"></h2>
+              <h2 class="text-white ms-4" id="completed-container"></h2>
               <p class="text-white">COMPLETED</p> </a
             ><a
-              href="/my-order"
+              href="/my-order?filter=cancelled"
               class="d-flex flex-column text-decoration-none"
             >
-              <h2 class="text-white" id="cancelled-container"></h2>
+              <h2 class="text-white ms-4" id="cancelled-container"></h2>
               <p class="text-white">CANCELLED</p>
             </a>
           </div>
@@ -334,8 +334,10 @@
         const cancelledContainer = document.getElementById("cancelled-container");
 
         // set the innerHTML of each element to the corresponding value from the data
-        unpaidContainer.innerHTML = data.UNPAID;
-        toPackContainer.innerHTML = data["TO-PACK"];
+        unpaidContainer.innerHTML = 5;
+        toPackContainer.innerHTML = 4;
+        // unpaidContainer.innerHTML = data.UNPAID;
+        // toPackContainer.innerHTML = data["TO-PACK"];
         toDeliverContainer.innerHTML = data["TO-DELIVER"];
         completedContainer.innerHTML = data.COMPLETED;
         cancelledContainer.innerHTML = data.CANCELLED;

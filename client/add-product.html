@@ -535,6 +535,7 @@
               data: formData,
               success: function (response) {
                 console.log("Form data submitted successfully");
+                window.location.replace("/my-product");
               },
               error: function (error) {
                 console.error("Error submitting form data:", error);
