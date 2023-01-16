@@ -43,55 +43,63 @@
       }
     </style>
   </head>
-  <body class="h-100">
-    <nav class="navbar bg-purple">
-      <div class="container-fluid">
-        <a class="navbar-brand text-light fw-bold" href="#">
-          <!-- <img
-            src="/docs/5.2/assets/brand/bootstrap-logo.svg"
-            alt="Logo"
-            width="30"
-            height="24"
-            class="d-inline-block align-text-top"
-          /> -->
-          OODS Shop Management System
+  <body class="h-100 bg-light" style="padding-top: 65px;">
+    <!-- Bottom Left User -->
+    <div class="fixed-bottom bg-purple" style="position: fixed; bottom: 0; left: 0; width: 220px; height: 50px;">
+      <div class="element-to-position d-flex flex-row align-content-center justify-content-start">
+        <img src="account.png" alt="user icon" width="50px" height="50px">
+        <p class="text-white fs-5 mt-2">Dayson</p>
+      </div>
+    </div>
+    <nav class="navbar bg-purple m-0 p-0 fixed-top">
+      <div class="container-fluid p-0">
+        <a class="navbar-brand text-light fw-bold m-0 p-0" href="#">
+          <img src="oodsIconWhite.png" alt="OODS Logo" width="140px" height="70px" class="ms-3">
+          
         </a>
       </div>
     </nav>
     <div class="sidenav-content-container d-flex flex-row h-100">
       <!-- Complete Sidebar -->
-      <div class="flex-shrink-0 p-3 bg-white" style="width: 220px">
+      <div class="flex-shrink-0 p-3 bg-white" style="width: 220px" ></div>
+      <div class="flex-shrink-0 p-3 bg-white position-fixed h-100" style="width: 220px" >
         <ul class="list-unstyled ps-0">
           <li class="mb-1">
             <a
               href="/dashboard"
               class="link-dark d-inline-flex text-decoration-none rounded fw-bold"
               style="padding: 6px 12px 6px 12px"
-              >Dashboard</a
-            >
+              ><img src="dashboard_icon.png" alt="dashboard_icon" height="20px" with="20px" class="me-1"> Dashboard
+            </a>
           </li>
           <li class="mb-1">
             <button
+              id="product-btn"
               class="btn btn-toggle d-inline-flex fw-bold align-items-center rounded border-0 collapsed"
               data-bs-toggle="collapse"
               data-bs-target="#dashboard-collapse"
               aria-expanded="false"
             >
-              Product
+              <div class="d-flex flex-row justify-content-between" width="150px">
+                <div>
+                  <img src="product_icon.png" alt="product icon" height="20px" with="20px" class="me-1"> Product
+                </div>
+                  <img id="product-arrow" src="right-arrow.png" alt="arrow" width="15px" height="15px" class="mt-1 ms-5" style="transform: rotate(90deg);" >
+              </div>
             </button>
             <div class="collapse ms-4" id="dashboard-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                 <li>
                   <a
                     href="/my-product"
-                    class="link-dark d-inline-flex text-decoration-none rounded"
+                    class="link-dark d-inline-flex text-decoration-none rounded ms-3"
                     >My Product</a
                   >
                 </li>
                 <li>
                   <a
                     href="/add-product"
-                    class="link-dark d-inline-flex text-decoration-none rounded"
+                    class="link-dark d-inline-flex text-decoration-none rounded ms-3"
                     >Add Product</a
                   >
                 </li>
@@ -100,40 +108,54 @@
           </li>
           <li class="mb-1">
             <button
+            id="order-btn"
               class="btn btn-toggle d-inline-flex fw-bold align-items-center rounded border-0 collapsed"
               data-bs-toggle="collapse"
               data-bs-target="#orders-collapse"
               aria-expanded="false"
             >
-              Order
+            <div class="d-flex flex-row justify-content-between"  >
+              <div>
+                <img src="order_icon.png" alt="order icon" height="20px" with="20px" class="me-1"> Order
+              </div>
+                <img id="order-arrow" src="right-arrow.png" alt="arrow" width="15px" height="15px" class="mt-1" style="transform: rotate(90deg); margin-left: 62.5px;" >
+            </div>
+              <!-- <img src="order_icon.png" alt="order icon" height="20px" with="20px" class="me-1"> Order -->
             </button>
             <div class="collapse ms-4" id="orders-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                 <li>
                   <a
                     href="/my-order"
-                    class="link-dark d-inline-flex text-decoration-none rounded"
+                    class="link-dark d-inline-flex text-decoration-none rounded ms-3"
                     >My Order</a
                   >
                 </li>
+                
               </ul>
             </div>
           </li>
           <li class="mb-1">
             <button
+            id="report-btn"
               class="btn btn-toggle d-inline-flex fw-bold align-items-center rounded border-0 collapsed"
               data-bs-toggle="collapse"
               data-bs-target="#report-collapse"
               aria-expanded="false"
             >
-              Report
+            <div class="d-flex flex-row justify-content-between"  >
+              <div>
+                <img src="report_icon.png" alt="report icon" height="20px" with="20px" class="me-1"> Report
+              </div>
+                <img id="report-arrow" src="right-arrow.png" alt="arrow" width="15px" height="15px" class="mt-1" style="transform: rotate(90deg); margin-left: 55px;" >
+            </div>
             </button>
             <div class="collapse ms-4" id="report-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                 <li>
                   <a
                     href="/sales-overview"
-                    class="link-dark d-inline-flex text-decoration-none rounded"
+                    class="link-dark d-inline-flex text-decoration-none rounded ms-3"
                     >Sales Overview</a
                   >
                 </li>
@@ -142,26 +164,32 @@
           </li>
           <li class="mb-1">
             <button
+            id="settings-btn"
               class="btn btn-toggle d-inline-flex fw-bold align-items-center rounded border-0 collapsed"
               data-bs-toggle="collapse"
               data-bs-target="#setting-collapse"
               aria-expanded="false"
             >
-              Setting
+            <div class="d-flex flex-row justify-content-between"  >
+              <div>
+                <img src="settings_icon.png" alt="settings icon" height="20px" with="20px" class="me-1"> Setting
+              </div>
+                <img id="settings-arrow" src="right-arrow.png" alt="arrow" width="15px" height="15px" class="mt-1" style="transform: rotate(90deg); margin-left: 52px;" >
+            </div>
             </button>
             <div class="collapse ms-4" id="setting-collapse">
               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                 <li>
                   <a
                     href="/my-account"
-                    class="link-dark d-inline-flex text-decoration-none rounded"
+                    class="link-dark d-inline-flex text-decoration-none rounded ms-3"
                     >My Account</a
                   >
                 </li>
                 <li>
                   <a
                     href="/shop-profile"
-                    class="link-dark d-inline-flex text-decoration-none rounded"
+                    class="link-dark d-inline-flex text-decoration-none rounded ms-3"
                     >Shop Profile</a
                   >
                 </li>
@@ -169,6 +197,7 @@
             </div>
           </li>
         </ul>
+        
       </div>
       <!-- Content -->
       <div class="content-container container flex-column p-4 bg-light">
@@ -254,6 +283,48 @@
         });
       });
 
+
+      let product_rotation = 0;
+      $("#product-btn").click(function(){
+        if (product_rotation === 0){
+            product_rotation = 180;
+            $("#product-arrow").animate({rotate: product_rotation+'deg'}, 250);
+        } else {
+            product_rotation = 0;
+            $("#product-arrow").animate({rotate: product_rotation+'deg'}, 250 );
+        }
+      });
+      let order_rotation = 0;
+      $("#order-btn").click(function(){
+        if (order_rotation === 0){
+            order_rotation = 180;
+            $("#order-arrow").animate({rotate: order_rotation+'deg'}, 250);
+        } else {
+            order_rotation = 0;
+            $("#order-arrow").animate({rotate: order_rotation+'deg'}, 250 );
+        }
+      });
+      let report_rotation = 0;
+      $("#report-btn").click(function(){
+        if (report_rotation === 0){
+            report_rotation = 180;
+            $("#report-arrow").animate({rotate: report_rotation+'deg'}, 250);
+        } else {
+            report_rotation = 0;
+            $("#report-arrow").animate({rotate: report_rotation+'deg'}, 250 );
+        }
+      });
+      let settings_rotation = 0;
+      $("#settings-btn").click(function(){
+        if (settings_rotation === 0){
+            settings_rotation = 180;
+            $("#settings-arrow").animate({rotate: settings_rotation+'deg'}, 250);
+        } else {
+            settings_rotation = 0;
+            $("#settings-arrow").animate({rotate: settings_rotation+'deg'}, 250 );
+        }
+      });
+
       function updatePage(data) {
         // get a reference to each element where you want to display the data
         const unpaidContainer = document.getElementById("unpaid-container");
@@ -271,14 +342,14 @@
 
 
         // Chart for Business Insight
-        const labels = ["January", "February", "March", "April", "May", "June"];
+        const labels = ["January", "February", "March"];
         const chartData = {
           labels: labels,
           datasets: [
             {
               label: "Sales Revenue",
 
-              data: [0, 10, 5, 2, 20, 30, 45],
+              data: [12, 17, 30],
             },
           ],
         };
@@ -286,7 +357,13 @@
         const config = {
           type: "line",
           data: chartData,
-          options: {},
+          options: {
+            scales: {
+              y:{
+                beginAtZero: true
+              }
+            }
+          },
         };
 
         var myChart = new Chart(document.getElementById("myChart"), config);
