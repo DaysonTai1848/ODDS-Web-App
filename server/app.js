@@ -1,7 +1,14 @@
+// These lines make "require" available
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+
 const express = require("express");
 const cors = require("cors");
 const app = express();
 const path = require("path");
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const dayjs = require("dayjs");
 
 // Middlewares
@@ -21,8 +28,60 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
-const auth = admin.auth();
+// // Initialize Firebase Authentication
+// // const initializeApp = require("firebase/app");
+// // require("firebase/auth");
+// // const firebase = require("firebase");
+// const firebase = require("firebase/app");
+// require("firebase/auth");
+// /**
+//  * You can find these values in the Firebase project settings under the
+//  *  "General" tab. The "Your applications" section will have the "Web API Key"
+//  * (apiKey), "Auth Domain" (authDomain), "Database URL" (databaseURL), "Project ID"
+//  * (projectId), "Storage Bucket" (storageBucket), "Messaging Sender ID"
+//  * (messagingSenderId), and "App ID" (appId).
+// Note that the API Key is not the same as the project id.
+//  */
+// const firebaseConfig = {
+//   apiKey: "AIzaSyA0TTeJNqO7DhKwhJkR13dmT2-245_ZoAo",
+//   authDomain: "odds-38a12.firebaseapp.com",
+//   databaseURL: "https://odds-38a12-default-rtdb.firebaseio.com",
+//   projectId: "odds-38a12",
+//   storageBucket: "odds-38a12.appspot.com",
+//   messagingSenderId: "948888911022",
+//   appId: "1:948888911022:web:8d2b477205aa82ef49c13f",
+//   measurementId: "G-LK9E235399",
+// };
+// firebase.initializeApp(firebaseConfig);
+// const auth = firebase.auth();
+// // const firebase = initializeApp(firebaseConfig);
+// // const auth = firebase.auth();
+// // alert(auth);
 
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyA0TTeJNqO7DhKwhJkR13dmT2-245_ZoAo",
+  authDomain: "odds-38a12.firebaseapp.com",
+  databaseURL: "https://odds-38a12-default-rtdb.firebaseio.com",
+  projectId: "odds-38a12",
+  storageBucket: "odds-38a12.appspot.com",
+  messagingSenderId: "948888911022",
+  appId: "1:948888911022:web:8d2b477205aa82ef49c13f",
+  measurementId: "G-LK9E235399",
+};
+
+// Initialize Firebase
+const firebase = initializeApp(firebaseConfig);
+
+// URL routing - exact match with browser url
 app.post("/register", async (req, res) => {
   const seller_name = req.body.seller_name;
   const seller_email = req.body.seller_email;
@@ -89,17 +148,21 @@ app.post("/register", async (req, res) => {
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  admin
-    .auth()
-    .signInWithEmailAndPassword(email, password)
-    .then(() => {
-      // Successful login, redirect to home page or other protected page
-      res.send("User registered successfully!");
-      //res.redirect("/home");
+  console.log(email);
+  console.log(password);
+
+  const auth = getAuth();
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      res.redirect("/dashboard");
     })
     .catch((error) => {
-      // Error logging in, send error message to the client
-      res.status(401).send(error.message);
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log("Login failed");
+      res.redirect("/login");
     });
 });
 
