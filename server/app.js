@@ -292,10 +292,11 @@ app.get("/my-order", (req, res) => {
 
 // UPDATE ORDER STATUS - FOR MY ORDER PAGE
 app.put("/editOrderStatus", (req, res) => {
-  const id = req.params.id;
-  const orderRef = db.collection("order").doc("B1WuGGH29UfgRUFEMiRI");
+  const id = req.body.id;
+  const order_status = req.body.order_status;
+  const orderRef = db.collection("order").doc(id);
   orderRef
-    .update({ order_status: req.body.order_status })
+    .update({ order_status: order_status })
     .then(() => {
       res.json({ message: "Order status updated successfully." });
     })

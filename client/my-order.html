@@ -314,7 +314,7 @@
           <div class="d-flex flex-row">
             <img src="order_icon.png" width="50px" height="50px" />
             <h1 class="ms-3">My Order</h1>
-            <div class="dropdown">
+            <!-- <div class="dropdown">
               <button
                 class="btn btn-secondary dropdown-toggle"
                 type="button"
@@ -327,7 +327,7 @@
                 <li>
                   <a
                     class="dropdown-item"
-                    onclick="updateStatus(id, order_status)"
+                    onclick="updateStatus('S9JyLksqjadp01C1sSQw', 'COMPLETED')"
                     >Action</a
                   >
                 </li>
@@ -336,7 +336,7 @@
                   <a class="dropdown-item" href="#">Something else here</a>
                 </li>
               </ul>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -580,20 +580,17 @@
       // import dayjs from "dayjs";
       // var dayjs = require("dayjs");
 
-      function updateStatus() {
-        console.log("update status clicked");
-        console.dir("THIS: " + this);
-        console.log(this.document);
-        console.log(this["document"]);
-        // $.ajax({
-        //   url: "/editOrderStatus",
-        //   type: "PUT",
-        //   data: { id: id, order_status: order_status },
-        //   success: function (response) {
-        //     // Reload the DataTable using the ajax.reload() method
-        //     // table.ajax.reload();
-        //   },
-        // });
+      function updateStatus(id, order_status) {
+        console.log("CHANGE: " + id + " " + order_status);
+        $.ajax({
+          url: "/editOrderStatus",
+          type: "PUT",
+          data: { id: id, order_status: order_status },
+          success: function (response) {
+            // Reload the DataTable using the ajax.reload() method
+            // table.ajax.reload();
+          },
+        });
       }
 
       $(document).ready(function () {
@@ -789,17 +786,11 @@
                               Unpaid
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                              <li>
-                                <a
-                                class="dropdown-item"
-                                onclick="updateStatus('CwWxjErTmzKsqzv93Mic', 'COMPLETED')"
-                                >Action</a>
-                              </li>
-                              <li><a class="dropdown-item" onclick="updateStatus(this)">UNPAID</a></li>
-                              <li><a class="dropdown-item" onclick="updateStatus(this)">TO-PACK</a></li>
-                              <li><a class="dropdown-item" onclick="updateStatus(this)">TO-DELIVER</a></li>
-                              <li><a class="dropdown-item" onclick="updateStatus(this)">COMPLETED</a></li>
-                              <li><a class="dropdown-item" onclick="updateStatus(this)">CANCELLED</a></li>
+                            <li><a onclick="updateStatus('${row.order_id}', 'UNPAID')" class="dropdown-item">UNPAID</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'TO-PACK')" class="dropdown-item">TO-PACK</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'TO-DELIVER')" class="dropdown-item">TO-DELIVER</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'COMPLETED')" class="dropdown-item">COMPLETED</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'CANCELLED')" class="dropdown-item">CANCELLED</a></li>
                             </ul>
                           </div>`;
                     return customDropdown;
@@ -815,16 +806,18 @@
                               To-Pack
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                              <li><a class="dropdown-item">UNPAID</a></li>
-                              <li><a class="dropdown-item">TO-PACK</a></li>
-                              <li><a class="dropdown-item">TO-DELIVER</a></li>
-                              <li><a class="dropdown-item">COMPLETED</a></li>
-                              <li><a class="dropdown-item">CANCELLED</a></li>
+                             <li><a onclick="updateStatus('${row.order_id}', 'UNPAID')" class="dropdown-item">UNPAID</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'TO-PACK')" class="dropdown-item">TO-PACK</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'TO-DELIVER')" class="dropdown-item">TO-DELIVER</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'COMPLETED')" class="dropdown-item">COMPLETED</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'CANCELLED')" class="dropdown-item">CANCELLED</a></li>
                             </ul>
                           </div>`;
                     return customDropdown;
                   }
                   if (row.order_status == "TO-DELIVER") {
+                    console.log("ROW.ORDER_ID " + row.order_id);
+                    console.log("ROW.ORDER_STATUS " + row.order_status);
                     var customDropdown = `<div class="dropdown" id="${row.order_id}">
                             <button
                               class="btn bg-info text-white fw-bold dropdown-toggle"
@@ -835,11 +828,11 @@
                               To-Deliver
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                              <li><a class="dropdown-item">UNPAID</a></li>
-                              <li><a class="dropdown-item">TO-PACK</a></li>
-                              <li><a class="dropdown-item">TO-DELIVER</a></li>
-                              <li><a class="dropdown-item">COMPLETED</a></li>
-                              <li><a class="dropdown-item">CANCELLED</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'UNPAID')" class="dropdown-item">UNPAID</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'TO-PACK')" class="dropdown-item">TO-PACK</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'TO-DELIVER')" class="dropdown-item">TO-DELIVER</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'COMPLETED')" class="dropdown-item">COMPLETED</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'CANCELLED')" class="dropdown-item">CANCELLED</a></li>
                             </ul>
                           </div>`;
                     return customDropdown;
@@ -856,11 +849,11 @@
                               Completed
                             </button>
                             <ul class="dropdown-menu dropdown-option" aria-labelledby="dropdownMenuButton1">
-                              <li><a class="dropdown-item">UNPAID</a></li>
-                              <li><a class="dropdown-item">TO-PACK</a></li>
-                              <li><a class="dropdown-item">TO-DELIVER</a></li>
-                              <li><a class="dropdown-item">COMPLETED</a></li>
-                              <li><a class="dropdown-item">CANCELLED</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'UNPAID')" class="dropdown-item">UNPAID</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'TO-PACK')" class="dropdown-item">TO-PACK</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'TO-DELIVER')" class="dropdown-item">TO-DELIVER</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'COMPLETED')" class="dropdown-item">COMPLETED</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'CANCELLED')" class="dropdown-item">CANCELLED</a></li>
                             </ul>
                           </div>`;
                     return customDropdown;
@@ -876,11 +869,11 @@
                               Cancelled
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                              <li><a class="dropdown-item">UNPAID</a></li>
-                              <li><a class="dropdown-item">TO-PACK</a></li>
-                              <li><a class="dropdown-item">TO-DELIVER</a></li>
-                              <li><a class="dropdown-item">COMPLETED</a></li>
-                              <li><a class="dropdown-item">CANCELLED</a></li>
+                             <li><a onclick="updateStatus('${row.order_id}', 'UNPAID')" class="dropdown-item">UNPAID</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'TO-PACK')" class="dropdown-item">TO-PACK</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'TO-DELIVER')" class="dropdown-item">TO-DELIVER</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'COMPLETED')" class="dropdown-item">COMPLETED</a></li>
+                              <li><a onclick="updateStatus('${row.order_id}', 'CANCELLED')" class="dropdown-item">CANCELLED</a></li>
                             </ul>
                           </div>`;
                     return customDropdown;
@@ -898,30 +891,30 @@
           },
 
           success: function () {
-            alert("initComplete");
-            var table = $("#table").DataTable();
-            table.columns().every(function () {
-              var column = this;
-              if (column.index() === 3) {
-                //column "order_status" index
-                var statusText = {
-                  UNPAID: "Unpaid",
-                  "TO-PACK": "To-Pack",
-                  "TO-DELIVER": "To-Deliver",
-                  COMPLETED: "Completed",
-                  CANCELLED: "Cancelled",
-                };
-                column
-                  .data()
-                  .unique()
-                  .sort()
-                  .each(function (d, j) {
-                    var orderStatusDropdown = $("#order-status-dropdown");
-                    orderStatusDropdown.find("button").html(statusText[d]);
-                    orderStatusDropdown.find("input").val(d);
-                  });
-              }
-            });
+            // alert("initComplete");
+            // var table = $("#table").DataTable();
+            // table.columns().every(function () {
+            //   var column = this;
+            //   if (column.index() === 3) {
+            //     //column "order_status" index
+            //     var statusText = {
+            //       UNPAID: "Unpaid",
+            //       "TO-PACK": "To-Pack",
+            //       "TO-DELIVER": "To-Deliver",
+            //       COMPLETED: "Completed",
+            //       CANCELLED: "Cancelled",
+            //     };
+            //     column
+            //       .data()
+            //       .unique()
+            //       .sort()
+            //       .each(function (d, j) {
+            //         var orderStatusDropdown = $("#order-status-dropdown");
+            //         orderStatusDropdown.find("button").html(statusText[d]);
+            //         orderStatusDropdown.find("input").val(d);
+            //       });
+            //   }
+            // });
           },
 
           // success: function () {
