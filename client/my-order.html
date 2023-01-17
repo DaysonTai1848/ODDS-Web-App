@@ -577,9 +577,6 @@
     </script>
     <!-- Execute Script -->
     <script>
-      // import dayjs from "dayjs";
-      // var dayjs = require("dayjs");
-
       function updateStatus(id, order_status) {
         console.log("CHANGE: " + id + " " + order_status);
         $.ajax({
@@ -589,58 +586,12 @@
           success: function (response) {
             // Reload the DataTable using the ajax.reload() method
             // table.ajax.reload();
+            $("#table").DataTable().ajax.reload();
           },
         });
       }
 
       $(document).ready(function () {
-        // HERE
-        $(".a").on("click", function () {
-          // var selectedOption = $(this).text();
-          // console.log("Selected option: " + selectedOption);
-          console.log("Hii");
-        });
-
-        $("#test-redraw").click(function () {
-          $.ajax({
-            url: "/editOrderStatus",
-            type: "PUT",
-            data: { id: "B1WuGGH29UfgRUFEMiRI", order_status: "UNPAID" },
-            success: function (response) {
-              // Reload the DataTable using the ajax.reload() method
-              table.ajax.reload();
-            },
-          });
-        });
-
-        // $("#test-redraw").click(function () {
-        //   // Search for the row with first column data "B1WuGGH29UfgRUFEMiRI"
-        //   table.search("B1WuGGH29UfgRUFEMiRI").draw();
-        //   // Get the index of the first row that matches the search
-        //   var rowIndex = table
-        //     .rows({ search: "applied" })
-        //     .indexes()
-        //     .toArray()[0];
-        //   // Select the row at the index
-        //   var row = table.row(rowIndex);
-        //   // Update the value of the 5th column
-        //   row.data()[4] = "Hahah";
-        //   // Redraw the table
-        //   table.draw();
-        // });
-
-        // $("#test-redraw").click(function () {
-        //   //Select the row whose first column data is "HAH"
-        //   var row = table
-        //     .row("td:eq(0):contains('B1WuGGH29UfgRUFEMiRI')")
-        //     .data();
-        //   console.log("ROW: " + row);
-        //   //Select the 5th column
-        //   var column = table.column(4);
-        //   console.log("COLUMN: " + column);
-        //   //Change the value of the cell in the selected row
-        //   column.data("Hahah").draw();
-        // });
         // Get the current URL
         const url = new URL(window.location.href);
         // Get the search params from the URL
@@ -675,13 +626,6 @@
             dataSrc: "",
           },
           columnDefs: [
-            // {
-            //   targets: 0,
-            //   orderable: false,
-            //   className: "select-checkbox",
-            //   data: null,
-            //   defaultContent: "",
-            // },
             {
               targets: 0,
               data: "order_by",
@@ -890,43 +834,7 @@
             pagination: "custom-pagination", // class name
           },
 
-          success: function () {
-            // alert("initComplete");
-            // var table = $("#table").DataTable();
-            // table.columns().every(function () {
-            //   var column = this;
-            //   if (column.index() === 3) {
-            //     //column "order_status" index
-            //     var statusText = {
-            //       UNPAID: "Unpaid",
-            //       "TO-PACK": "To-Pack",
-            //       "TO-DELIVER": "To-Deliver",
-            //       COMPLETED: "Completed",
-            //       CANCELLED: "Cancelled",
-            //     };
-            //     column
-            //       .data()
-            //       .unique()
-            //       .sort()
-            //       .each(function (d, j) {
-            //         var orderStatusDropdown = $("#order-status-dropdown");
-            //         orderStatusDropdown.find("button").html(statusText[d]);
-            //         orderStatusDropdown.find("input").val(d);
-            //       });
-            //   }
-            // });
-          },
-
-          // success: function () {
-          //   var statusText = {
-          //     UNPAID: "Unpaid",
-          //     "TO-PACK": "To-Pack",
-          //     "TO-DELIVER": "To-Deliver",
-          //     COMPLETED: "Completed",
-          //     CANCELLED: "Cancelled",
-          //   };
-
-          // },
+          success: function () {},
         });
 
         // Get the value of the "filter" parameter from the URL

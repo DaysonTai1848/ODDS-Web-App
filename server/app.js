@@ -261,8 +261,15 @@ app.get("/profile", (req, res) => {
 app.get("/getAccount", (req, res) => {
   const auth = getAuth();
   const user = auth.currentUser;
-  console.log(user.email);
-  res.json(user.email);
+
+  // create an array
+  const accountData = [
+    {
+      email: user.email,
+    },
+  ];
+
+  res.json(accountData);
 });
 
 // DASHBOARD PAGE
@@ -356,20 +363,20 @@ app.get("/getOrderStatus", async (req, res) => {
 
 // GET MONTHLY REVENUE - FOR DASHBOARD PAGE
 app.get("/getMonthlyRevenue", async (req, res) => {
-  var start_date;
+  // var start_date = req.body
   // start and end date for filter
   //Convert the start_date and end_date to timestamp using day.js
-  start_date = dayjs(start_date, "DD/MM/YYYY").unix();
-  end_timestamp = dayjs(end_date, "DD/MM/YYYY").unix();
+  // start_date = dayjs(start_date, "DD/MM/YYYY").unix();
+  // end_timestamp = dayjs(end_date, "DD/MM/YYYY").unix();
 
   // Get a reference to the orders collection
   const ordersRef = db.collection("order");
 
   // Get the query snapshot for the orders collection
   const ordersSnapshot = await ordersRef.get();
-  let query = collectionRef
-    .where("order_date", ">=", start_date)
-    .where("order_date", "<=", end_date);
+  // let query = collectionRef
+  //   .where("order_date", ">=", start_date)
+  //   .where("order_date", "<=", end_date);
 
   // Initialize an array to hold the order objects
   const orders = [];
@@ -407,7 +414,148 @@ app.get("/getMonthlyRevenue", async (req, res) => {
 
   // Call the async function
   await addOrderData();
-  console.log(orders);
+  // console.log(orders);
+
+  // sort the orders by date
+  const sortedOrders = orders.sort((a, b) => {
+    // Extract the timestamp from the order date of each object
+    const timestampA = a.order_date._seconds;
+    const timestampB = b.order_date._seconds;
+    // Create date objects from the timestamps
+    const dateA = new Date(timestampA * 1000);
+    const dateB = new Date(timestampB * 1000);
+    // Compare the dates and return 1, -1 or 0 depending on which is greater
+    if (dateA > dateB) {
+      return 1;
+    } else if (dateA < dateB) {
+      return -1;
+    } else {
+      return 0;
+    }
+  });
+
+  // group the sales revenue by month and year,
+  // then calculate the total revenue for each month
+  // var salesRevenueArray = [[], []];
+
+  const salesRevenue = sortedOrders.reduce((acc, order) => {
+    // Extract the timestamp from the order date
+    const timestamp = order.order_date._seconds;
+    // Create a new date object from the timestamp
+    const date = new Date(timestamp * 1000);
+    // Extract the year and month from the date
+    const year = date.getFullYear();
+    const month = date.toLocaleString("default", { month: "long" });
+    // Check if an entry for the current year and month already exists in the accumulator
+    if (!acc[year]) {
+      acc[year] = {};
+    }
+    if (!acc[year][month]) {
+      acc[year][month] = 0;
+    }
+    // Add the order amount to the accumulator
+    acc[year][month] += parseFloat(order.order_amount);
+    return acc;
+  }, {});
+
+  // Format the sales revenue object
+  const formattedSalesRevenue = Object.entries(salesRevenue).reduce(
+    (acc, [year, months]) => {
+      Object.entries(months).forEach(([month, amount]) => {
+        acc[`${month} ${year}`] = amount;
+      });
+      return acc;
+    },
+    {}
+  );
+  console.log(formattedSalesRevenue);
+
+  // Convert object to array of key-value pairs
+  const salesRevenueArray = Object.entries(formattedSalesRevenue);
+  console.log(salesRevenueArray);
+
+  // Sort array by key
+  // var sortedArray = salesRevenueArray.sort();
+
+  // Extract keys and values into separate arrays
+  const month = salesRevenueArray.map(([key, value]) => key);
+  const revenue = salesRevenueArray.map(([key, value]) => value);
+
+  console.log(month);
+  console.log(revenue);
+
+  res.json({ month, revenue });
+});
+
+// GET MONTHLY REVENUE W/ FILTER- FOR DASHBOARD PAGE
+app.get("/getMonthlyRevenueFiltered", async (req, res) => {
+  var start_date = dayjs(req.query.start_date).toDate();
+  var end_date = dayjs(req.query.end_date).toDate();
+  console.log("start_date: " + start_date);
+  console.log("end_date: " + end_date);
+  // start and end date for filter
+  //Convert the start_date and end_date to timestamp using day.js
+  // var start_timestamp = dayjs(start_date, "DD/MM/YYYY").unix();
+  // var end_timestamp = dayjs(end_date, "DD/MM/YYYY").unix();
+  // console.log("start_stampL " + start_timestamp);
+  // console.log("end_stampL " + end_timestamp);
+
+  // Get a reference to the orders collection
+  const ordersRef = db.collection("order");
+
+  let start = new Date("2023-01-01");
+  let end = new Date("2023-02-01");
+
+  let query = ordersRef
+    .where("order_date", ">", start_date)
+    .where("order_date", "<", end_date);
+
+  // The query is working correctly
+  // var query = ordersRef.where("delivery_method", "==", "Self Collection");
+
+  // Get the query snapshot for the orders collection
+  let filteredOrders = await query.get();
+  // console.log("FILTERED ORDERS: " + JSON.stringify(filteredOrders));
+  console.log("filtered order size: " + filteredOrders._size);
+  // res.json({ filteredOrders });
+
+  // Initialize an array to hold the order objects
+  const orders = [];
+
+  // Wrap the loop in an async function
+  const addOrderData = async () => {
+    // Create an array of order promises
+    const orderPromises = filteredOrders.docs.map(async (item) => {
+      // Create an object for the order
+      const order = {
+        order_id: item.id,
+        // delivery_method: item.data().delivery_method,
+        // delivery_time: item.data().delivery_time,
+        order_amount: item.data().order_amount,
+        order_by: item.data().order_by,
+        // order_date: dayjs(item.data().order_date.toDate().toISOString()).format(
+        //   "DD MMM YYYY"
+        // ),
+        order_date: item.data().order_date,
+        // order_status: item.data().order_status,
+        // payment_method: item.data().payment_method,
+        // order_number: ordersSnapshot.size,
+      };
+
+      // Return the order object
+      return order;
+    });
+
+    // Wait for all of the order promises to resolve
+    const resolvedOrders = await Promise.all(orderPromises);
+
+    // Add the resolved orders to the orders array
+    orders.push(...resolvedOrders);
+  };
+
+  // Call the async function
+  await addOrderData();
+  // console.log(orders);
 
   // sort the orders by date
   const sortedOrders = orders.sort((a, b) => {
@@ -1098,9 +1246,9 @@ app.get("/getProductRanking", async (req, res) => {
   // console.log("orderedProduct" + orderedProducts);
   // res.json(orderedProducts);
 
-  console.log(JSON.stringify(productRanking, null, 2));
-  console.log("Number of orders:", productRanking.length);
-  console.log("GET all orders successfully");
+  // console.log(JSON.stringify(productRanking, null, 2));
+  // console.log("Number of orders:", productRanking.length);
+  // console.log("GET all orders successfully");
 
   res.json(productRanking);
 });

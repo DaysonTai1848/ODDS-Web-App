@@ -417,6 +417,23 @@
 
         // Generate button clicked
         $("#generate-btn").click( function () {
+          console.log("generate button clicked");
+          console.log("start_date: " + $("#datepicker-start").val());
+          console.log("end_date: " + $("#datepicker-end").val());
+          $.ajax({
+            type: "GET",
+            url: "/getMonthlyRevenueFiltered",
+            data: {
+              start_date: $("#datepicker-start").val(),
+              end_date: $("#datepicker-end").val(),
+            },
+            success: function(response) {
+              console.log("response: " + JSON.stringify(response));
+            },
+            error: function(error) {
+              // Handle the error
+            }
+          });
           
           // change metric
           $("#api-order").html(8);
