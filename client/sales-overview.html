@@ -313,6 +313,7 @@
     <!-- Execute Script -->
     <script type="module">
       $(document).ready(function () {
+        var myChart;
         $.ajax({
           url: "/getMonthlyRevenue",
           type: "GET",
@@ -341,7 +342,8 @@
               },
             };
 
-            var myChart = new Chart(document.getElementById("myChart"), config);
+            myChart = new Chart(document.getElementById("myChart"), config);
+
             var revenueSum = data.revenue.reduce((a, b) => a + b, 0);
             $("#api-sales").html("RM" + revenueSum.toFixed(2));
           },
@@ -428,8 +430,68 @@
               start_date: $("#datepicker-start").val(),
               end_date: $("#datepicker-end").val(),
             },
+            success: function(data) {
+              console.log("response: " + JSON.stringify(data));
+              var revenueSum = data.revenue.reduce((a, b) => a + b, 0);
+              $("#api-sales").html("RM" + revenueSum.toFixed(2));
+              // $("#api-sales").html("RM" + revenueSum.toFixed(2));
+              // change metric
+              // Initialize number of the 3 metrics
+
+              const labels = data.month;
+              console.log("LABELS: "+labels);
+              console.log("REVENUE: "+data.revenue);
+              const chartData = {
+                labels: labels,
+                datasets: [
+                  {
+                    label: "Sales Revenue",
+
+                    data: data.revenue,
+                  },
+                ],
+              };
+              const config = {
+                type: "line",
+                data: chartData,
+                options: {
+                  scales: {
+                    y:{
+                      beginAtZero: true
+                    }
+                  }
+                },
+              };
+
+              // Chart.helpers.each(function(chart) {
+            
+              //   chart.chartData = chartData;
+              //   chart.update();
+              // })
+            myChart.data = chartData;
+            myChart.update();
+
+              // myChart.data = newChartData;
+              // myChart.update();
+            },
+            error: function(error) {
+              // Handle the error
+            }
+          });
+
+          $.ajax({
+            type: "GET",
+            url: "/getOrderStatusFiltered",
+            data: {
+              start_date: $("#datepicker-start").val(),
+              end_date: $("#datepicker-end").val(),
+            },
             success: function(response) {
               console.log("response: " + JSON.stringify(response));
+              // change metric
+              // Initialize number of the 3 metrics
+              $("#api-order").html(Object.values(response).reduce((acc, val) => acc + val));
+              $("#api-cancelled").html(response.CANCELLED);
             },
             error: function(error) {
               // Handle the error
@@ -437,13 +499,12 @@
           });
           
           // change metric
-          $("#api-order").html(8);
-          $("#api-cancelled").html(0);
-          $("#api-sales").html("RM" + (265).toFixed(2));
+          // $("#api-order").html(8);
+          // $("#api-cancelled").html(0);
+          // $("#api-sales").html("RM" + (265).toFixed(2));
 
           // redraw chart
-          myChart.data = newChartData;
-          myChart.update();
+          
         })
 
         // initialize product ranking table

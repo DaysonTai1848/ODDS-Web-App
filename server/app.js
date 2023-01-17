@@ -344,6 +344,37 @@ app.get("/getOrderStatus", async (req, res) => {
   res.json(orderCounts);
 });
 
+// GET ORDER STATUS NUMBER - FOR DASHBOARD PAGE
+app.get("/getOrderStatusFiltered", async (req, res) => {
+  var start_date = dayjs(req.query.start_date).toDate();
+  var end_date = dayjs(req.query.end_date).toDate();
+
+  // Get a reference form order collection
+  const orderRef = db
+    .collection("order")
+    .where("order_date", ">", start_date)
+    .where("order_date", "<", end_date);
+
+  // Get the query snapshot for collection
+  const orderSnapshot = await orderRef.get();
+
+  // Initialize an object to hold the order counts for each status
+  const orderCounts = {
+    UNPAID: 0,
+    "TO-PACK": 0,
+    "TO-DELIVER": 0,
+    COMPLETED: 0,
+    CANCELLED: 0,
+  };
+  // Iterate through the orders and update the count for each status
+  orderSnapshot.docs.forEach((item) => {
+    const status = item.data().order_status;
+    orderCounts[status] += 1;
+  });
+
+  res.json(orderCounts);
+});
+
 // GET MONTHLY REVENUE - FOR DASHBOARD PAGE
 app.get("/getMonthlyRevenue", async (req, res) => {
   // var start_date = req.body
@@ -867,7 +898,7 @@ app.post("/postProduct", (req, res) => {
   const productsRef = db.collection("products");
 
   // Get a list of cities from your database
-  productsRef.doc("DAP-0001").set({
+  productsRef.doc("BBC-0010").set({
     // price: Math.round(price * 100) / 100,
     price: parseFloat(price),
     product_description: product_description,
@@ -877,6 +908,9 @@ app.post("/postProduct", (req, res) => {
     stock: parseFloat(stock),
     under_category: under_category,
     image: image,
+    "owned by": "SH0003",
+    product_rating: 0,
+    product_rating_times: 0,
   });
 
   // send a response to the client
