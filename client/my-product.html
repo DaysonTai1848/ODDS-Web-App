@@ -421,7 +421,7 @@
             ></button>
           </div>
           <div class="modal-body">
-            <form id="add-stock-modal-content">
+            <form id="add-stock-modal-content" action="/addStock" method="PUT">
               <div class="mb-3">
                 <label for="recipient-name" class="col-form-label"
                   >Recipient:</label
@@ -564,7 +564,7 @@
                   render: function (data, type, row) {
                     // If display or filter data is requested, format the date
                     if (type === "display" || type === "filter") {
-                      return "RM" + data.toFixed(2);
+                      return "RM" + parseFloat(data).toFixed(2);
                     }
 
                     // Otherwise the data type requested (`type`) is type detection or

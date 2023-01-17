@@ -276,6 +276,45 @@
     <script>
       $(document).ready(function () {
         $.ajax({
+          url: "/getMonthlyRevenue",
+          type: "GET",
+          success: function(data) {
+            // const labels = ["May", "June", "July", "August", "September", "October"];
+            const labels = data.month;
+            console.log(labels)
+            const chartData = {
+              labels: labels,
+              datasets: [
+                {
+                  label: "Sales Revenue",
+
+                  data: data.revenue,
+                },
+              ],
+            };
+            const config = {
+              type: "line",
+              data: chartData,
+              options: {
+                scales: {
+                  y:{
+                    beginAtZero: true
+                  }
+                }
+              },
+            };
+
+            var myChart = new Chart(document.getElementById("myChart"), config);
+            var revenueSum = data.revenue.reduce((a, b) => a + b, 0);
+            $("#api-sales").html("RM" + revenueSum.toFixed(2));
+          },
+          error: function(data) {
+            console.log(data);
+          }
+        });
+
+        
+        $.ajax({
           url: "/getOrderStatus",
           success: function(data) {
             updatePage(data);
@@ -342,32 +381,7 @@
         cancelledContainer.innerHTML = data.CANCELLED;
 
 
-        // Chart for Business Insight
-        const labels = ["January", "February", "March"];
-        const chartData = {
-          labels: labels,
-          datasets: [
-            {
-              label: "Sales Revenue",
-
-              data: [12, 17, 30],
-            },
-          ],
-        };
-
-        const config = {
-          type: "line",
-          data: chartData,
-          options: {
-            scales: {
-              y:{
-                beginAtZero: true
-              }
-            }
-          },
-        };
-
-        var myChart = new Chart(document.getElementById("myChart"), config);
+     
       }
 
     </script>

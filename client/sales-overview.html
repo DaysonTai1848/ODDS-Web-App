@@ -317,7 +317,6 @@
           url: "/getMonthlyRevenue",
           type: "GET",
           success: function(data) {
-            // const labels = ["May", "June", "July", "August", "September", "October"];
             const labels = data.month;
             console.log(labels)
             const chartData = {
@@ -366,14 +365,16 @@
 
 
         // Initialize number of the 3 metrics
-        $.get("/getOrders", function (items) {
-          $("#api-order").html(items[0].order_number);
-          $("#api-cancelled").html(0);
-          // $("#api-order").html(14);
-          // $("#api-cancelled").html(0);
-          // $("#api-sales").html("RM" + (416.5).toFixed(2));
+        $.get("/getOrderStatus", function (items) {
+          console.log("ITEMS: "+JSON.stringify(items));
+
+          $("#api-order").html(Object.values(items).reduce((acc, val) => acc + val));
+          $("#api-cancelled").html(items.CANCELLED);
         });
 
+        
+
+    
         
 
         const labels = ["May", "June", "July", "August", "September", "October"];

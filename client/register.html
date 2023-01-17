@@ -1,65 +1,438 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Register</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <!-- Nunito Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,700" rel="stylesheet">
+    <title>Sign Up</title>
 </head>
-<body>
-    <form method="post" action="/register">
-        <h3> Seller Account Information </h3>
-        <label for="seller_name">Name:</label>
-        <input type="text" id="seller_name" name="seller_name" placeholder="Enter your name" required>
-        <br>
-        <label for="seller_username">Username:</label>
-        <input type="text" id="seller_username" name="seller_username" placeholder="Enter your username" required>
-        <br>
-        <label for="seller_email">Email:</label>
-        <input type="email" id="seller_email" name="seller_email" placeholder="Enter your email" required>
-        <br>
-        <label for="seller_password">Password:</label>
-        <input type="password" id="seller_password" name="seller_password" placeholder="Enter a password" required>
-        <br>
+<style>
+    .loginBody{
+    font-family: 'Nunito', sans-serif;
+      background-repeat: space;
+      background-size: cover;
+      background-color: #4E457D;
+      background-image: url("BGRegister.png");
+  }
 
-        <br><h3> Shop Details </h3>
-        <label for="shop_name">Shop Name:</label>
-        <input type="text" id="shop_name" name="shop_name" placeholder="Enter your shop name" required>
-        <br>
-        <label for="shop_tel">Shop Tel:</label>
-        <input type="text" id="shop_tel" name="shop_tel" placeholder="Enter your shop tel" required>
-        <br>
-        <label for="shop_open">Shop Open:</label>
-        <input type="text" id="shop_open" name="shop_open" placeholder="Enter your shop opening time" required>
-        <br>
-        <label for="shop_close">Shop Close:</label>
-        <input type="text" id="shop_close" name="shop_close" placeholder="Enter your shop closing time" required>
-        <br>
-        <label for="shop_addr1">Address 1:</label>
-        <input type="text" id="shop_addr1" name="shop_addr1" placeholder="Enter your shop address 1" required>
-        <br>
-        <label for="shop_addr2">Address 2:</label>
-        <input type="text" id="shop_addr2" name="shop_addr2" placeholder="Enter your shop address 2" required>
-        <br>
-        <label for="shop_city">City:</label>
-        <input type="text" id="shop_city" name="shop_city" placeholder="Enter your shop city" required>
-        <br>
-        <label for="shop_postcode">Postcode:</label>
-        <input type="text" id="shop_postcode" name="shop_postcode" placeholder="Enter your shop postcode" required>
-        <br>
-        <label for="shop_state">State:</label>
-        <input type="text" id="shop_state" name="shop_state" placeholder="Enter your state" required>
-        <br>
-        <label for="shop_latitude">Latitude:</label>
-        <input type="text" id="shop_latitude" name="shop_latitude" placeholder="Enter your shop latitude" required>
-        <br>
-        <label for="shop_longitude">Longitude:</label>
-        <input type="text" id="shop_longitude" name="shop_longitude" placeholder="Enter your longitude" required>
-        <br>
+
+.signUpBody{
+      font-family: 'Nunito', sans-serif;
+      background-repeat: round;
+      background-size: contain;
+      background-color: #4E457D;
+      background-image: url("BGRegister.png");
+  }
+
+.homePageBody{
+      font-family: 'Nunito', sans-serif;
+      background-repeat: space;
+      background-size: cover;
+      background-color: #4E457D;
+      background-image: url("BGLandingPage.png");
+  }
 
 
 
+a{
+    text-decoration: none !important;
+}
+#userFullNameError, #userQualificationError, #userLocationError, #userEmailError, #userPasswordError, #userSIEmailError, #userSIPasswordError, #userBioError, #editProfileForm{
+    display: none;
+}
+
+
+/* Style the top navigation bar */
+.topnav {
+  background-color: #FFFFFF;
+}
+
+.link{
+  float: right;
+  display: block;
+  color: #737373;
+  padding: 40px 20px;
+  text-decoration: none;
+  transition-duration: 0.4s;
+}
+
+
+/*Style Button Register*/
+.link2{
+  float: right;
+  display: block;
+  color: #737373;
+  padding: 25px 10px;
+  text-decoration: none;
+  transition-duration: 0.4s;
+}
+
+.button{
+  background-color: #4E457D; 
+  color: white; 
+  display: block;
+  font-size: 12px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border: none;
+  padding: 20px;
+}
+
+.button:hover {
+  background-color: #E47474;
+  color: white;
+}
+
+.border {border-radius: 30px;}
 
 
 
-        <button type="submit">Register</button>
-    </form>
+/*Style Button Login*/
+
+.link3{
+  float: right;
+  display: block;
+  color: #737373;
+  padding: 25px 15px;
+  text-decoration: none;
+  transition-duration: 0.4s;
+}
+
+.buttonLogin{
+  background-color: #4E457D; 
+  color: white; 
+  display: block;
+  font-size: 12px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border: none;
+  padding: 20px 35px;
+}
+
+.buttonLogin:hover {
+  background-color: #E47474;
+  color: white;
+}
+
+.borderLogin {border-radius: 30px;}
+
+
+
+
+
+/*Style Login & SignUp Form*/
+.loginForm
+{ padding: 50px 50px 10px 100px; }
+
+.signUpForm
+{ padding: 1px 350px 20px 350px; }
+
+
+/*Style Login & SignUp Btn UI*/
+
+.btnLogin{
+  background-color: #4E457D; 
+  color: white; 
+  display: block;
+  font-size: 15px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border: none;
+  padding: 20px 70px;
+  margin-left: 400px;
+  border-radius: 25px;   
+}
+
+.btnLogin:hover {
+  background-color: #E47474;
+  color: white;
+}
+
+
+.btnSignUp{
+  background-color: #4E457D; 
+  color: white; 
+  display: block;
+  font-size: 15px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border: none;
+  padding: 20px 70px;
+  border-radius: 25px;   
+}
+
+.btnSignUp:hover {
+  background-color: #E47474;
+  color: white;
+}
+
+
+/*Style Login & Signup Heading*/
+
+.heading{
+  font-family: "Source Sans Pro", "Arial", sans-serif;
+  font-weight: bold;
+  font-size: 35px;
+}
+
+.heading2{
+  font-family: serif;
+  font-size: 20px;
+  color: #737373;
+
+}
+
+/*Style Bottom New Link*/
+.newLink{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  text-align: center;
+  margin: auto;
+  width: 640px; 
+}
+
+.newLinkLogin{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  margin-left: 155px;
+  width: 640px; 
+}
+
+/*Style Login & SignUp Border*/
+
+.signInBorder{
+  align-content: center;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.signUpBorder{
+  align-content: center;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+
+/*Style Home Page Border*/
+.column {
+  width: 50%;
+  background-color: #4E457D;
+  color: #FFFFFF;
+  height: 100%; 
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.delivery{
+  font-family: 'Brush Script MT', cursive;
+  font-size: 50px;
+  text-align: center;
+  font-weight: bold;
+  margin: auto;
+  width: 640px;
+  padding-top: 150px; 
+}
+
+.centralised{
+  font-family: "Lucida Console", "Courier New", monospace;
+  font-size: 35px;
+  text-align: center;
+  margin: auto;
+  width: 640px; 
+}
+
+
+/*Hover DropDown*/
+.dropbtn {
+  background-color: #ffffff00; 
+  color: white;
+  font-size: 16px;
+  border: none;
+  margin-right: 20px;
+
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  min-width: auto;
+  box-shadow: auto;
+  z-index: 1;
+  left:-70%;
+}
+
+.dropDownSignout {
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropDownSignout:hover {background-color: #E47474;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: #ffffff00; }
+
+
+
+/*Style My Account */
+.profileLeft
+{
+  float: left;
+  margin-left: 50px;
+}
+
+.profileRight
+{
+  float: right;
+  margin-right: 350px;
+  display: none;
+}
+
+.profileBottom
+{
+  float: left;
+  margin-top: 20px;
+  margin-right: 50%;
+}
+
+/*Style Shop Profile */
+.shopLeft
+{
+  float: left;
+  margin-left: 50px;  
+}
+
+.shopRight
+{
+  float: right;
+  margin-right: 350px;
+  display: none;
+}
+
+.shopBottom
+{
+  float: left;
+  margin-top: 20px;
+  margin-right: 50%;
+}
+
+
+/*Hide Details*/
+.hideDetails{
+  display: none;
+}
+</style>
+<body class="signUpBody">
+     <div class="topnav">
+      <a href="/Home"><img src = "oodsIconPurple.png" width="200px" height="100px" style="margin-left: 20px; margin-right: 400px;"></a>
+      <a class = "link2"  href="/login"><button class = "button border">LOGIN</button></a>
+    </div>
+
+<form class="signUpForm" method="post" action="/register">
+    <div class="container-fluid">
+        <div class="row mx-1">
+            <div class="col-lg-10 col-md-10 offset-lg-1 offset-md-1 text-center mt-5 pb-4 text-primary">
+            </div>
+
+            <div class="col-lg-10 col-md-10 offset-lg-1 offset-md-1 bg-white shadow mb-5 border">
+
+                <center>
+                    <div class="signUpBorder">
+                    <div id="signUpForm"></center>
+                        <div class="form-group">
+                            <h2 class="h2 text-center heading">SIGN UP</h2>
+                            <h2 class="h2 text-center heading2">New to this website? Sign UP NOW</h2>
+                            <br>
+                            <h3> Seller Account Information </h3>
+                            <label for="seller_name">Seller Name<span class="text-danger ml-1">*</span></label>
+                            <input type="text" class="form-control" id="seller_name" name="seller_name" placeholder="seller_name" required>
+                        </div>
+                       <div class="form-group">
+                            <label for="seller_username">Username<span class="text-danger ml-1">*</span></label>
+                            <input type="text" class="form-control" id="seller_username" name="seller_username" placeholder="seller_username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="seller_email">Email adress<span class="text-danger ml-1">*</span></label>
+                            <input type="email" class="form-control" id="seller_email" name="seller_email" placeholder="mail@mail.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="seller_password">Password<span class="text-danger ml-1">*</span></label>
+                            <input type="password" class="form-control" id="seller_password" name="seller_password" placeholder="**********" required>
+                        </div>
+
+                        <h3> <br>Shop Details </h3>
+
+                        <div class="form-group">
+                            <label for="shop_name">Shop Name<span class="text-danger ml-1">*</span></label>
+                            <input type="text" class="form-control" id="shop_name" name="shop_name" placeholder="shop_name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="shop_tel">Office Number<span class="text-danger ml-1">*</span></label>
+                            <input type="number" class="form-control" id="shop_tel" name="shop_tel" placeholder="shop_tel" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="text">Opening Time<span class="text-danger ml-1">*</span></label>
+                            <input type="tel" class="form-control" id="shop_open" name="shop_open" placeholder="shop_open" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="text">Closing Time<span class="text-danger ml-1">*</span></label>
+                            <input type="tel" class="form-control" id="shop_close" name="shop_close" placeholder="shop_close" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="text">Address 1<span class="text-danger ml-1">*</span></label>
+                            <input type="tel" class="form-control" id="shop_addr1" name="shop_addr1" placeholder="shop_addr1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="add2">Address 2<span class="text-danger ml-1">*</span></label>
+                            <input type="text" class="form-control" id="shop_addr2" name="shop_addr2" placeholder="shop_addr2" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">City<span class="text-danger ml-1">*</span></label>
+                            <input type="text" class="form-control" id="shop_city" name="shop_city" placeholder="shop_city" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="postcode">Postcode<span class="text-danger ml-1">*</span></label>
+                            <input type="number" class="form-control" id="shop_postcode"  name="shop_postcode" placeholder="shop_postcode" maxlength="5" minlength="5" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State<span class="text-danger ml-1">*</span></label>
+                            <input type="text" class="form-control" id="shop_state" name="shop_state" placeholder="shop_state" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="latitude">Latitude<span class="text-danger ml-1">*</span></label>
+                            <input type="text" class="form-control" id="shop_latitude" name="shop_latitude" placeholder="shop_latitude" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="longitude">Latitude<span class="text-danger ml-1">*</span></label>
+                            <input type="text" class="form-control" id="shop_longitude" name="shop_longitude" placeholder="shop_latitude" required>
+                        </div>
+                        
+                        <center><button type="submit" class="btnSignUp btn-outline-primary text-uppercase mb-3">Sign Up</button></center> 
+                        <p class="newLinkLogin">Already Have An Account? <a href="/login"><strong class="text-primary text-uppercase">Sign In</strong></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ </form>
 </body>
 </html>
+

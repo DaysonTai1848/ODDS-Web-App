@@ -340,6 +340,7 @@ a{
 .hideDetails{
   display: none;
 }
+
 </style>
 
 <body class="loginBody">
@@ -347,7 +348,7 @@ a{
       <a href="/Home"><img src = "oodsIconPurple.png" width="200px" height="100px" style="margin-left: 20px; margin-right: 400px;"></a>
       <a class = "link2"  href="/register"><button class = "button border">REGISTER AS VENDOR</button></a>
     </div>
-<form class="loginForm" method="post" action="/login">
+<form class="loginForm" method="post" action="/forgotpass">
     <div class="container-fluid">
         <div class="row mx-1">
             <div class="col-lg-10 col-md-10 offset-lg-1 offset-md-1 text-center mt-5 pb-4 text-primary">
@@ -356,19 +357,13 @@ a{
 
                     <div class="signInBorder">
                         <div id="signInForm">
-                            <h2 class="h2 text-center heading">LOGIN</h2>
-                            <h2 class="h2 text-center heading2">New to this website? Sign in NOW</h2>
+                            <h2 class="h2 text-center heading">FORGOT PASSWORD</h2>
+                            <h2 class="h2 text-center heading2">You forgot you password? Reset Now</h2>
                             <div class="form-group">
                                 <label for="email">Email adress<span class="text-danger ml-1">*</span></label>
                                 <input type="email" class="form-control" id="email" name="email" placeholder="mail@mail.com" required>
                             </div>
-                            <div class="form-group">
-                                <label for="password">Password<span class="text-danger ml-1">*</span></label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="password" required>
-                            </div>
-                            <a href="/forgotpass"><span class="text-danger ml-1">Forgot Password?</span></a>
-                            <button type="submit" class="btnLogin btn-outline-primary text-uppercase mb-3">Sign In</button>
-                            <p class="newLink"><center>Don't have an account? <a href="/register"><strong class="text-primary text-uppercase showSignUpForm">Sign Up</strong></a></center></p>
+                            <button type="submit" class="btnLogin btn-outline-primary text-uppercase mb-3">RESET PASSWORD</button>
                         </div>
                     </div>
                 </div>
@@ -378,27 +373,3 @@ a{
 
 </body>
 </html>
-
-
-
-
-
-
-
-<!-- <!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-</head>
-<body>
-    <form method="post" action="/login">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" placeholder="Enter your password" required>
-        <br>
-        <button type="submit">Login</button>
-    </form>
-</body>
-</html> -->

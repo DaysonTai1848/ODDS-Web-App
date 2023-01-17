@@ -173,26 +173,32 @@
         </div>
 
         <hr />
-        <form method="post" action="/updateProfile">
         <div class="card m-4 p-5">
           <h3 class="mb-5">Personal Account Setting</h3>
           <div class="input-container d-flex flex-row mb-3">
             <p class="w-25 fs-5 fw-bold">Username</p>
-            <input type="text" class="form-control" id="usernameProfile"/>
+            <input type="text" class="form-control" />
           </div>
           <div class="input-container d-flex flex-row mb-3">
             <p class="w-25 fs-5 fw-bold">Owner Name</p>
-            <input type="text" class="form-control" id="ownernameProfile"/>
+            <input type="text" class="form-control" />
+          </div>
+          <div class="input-container d-flex flex-row mb-3">
+            <p class="w-25 fs-5 fw-bold">Phone</p>
+            <input type="number" class="form-control" />
           </div>
           <div class="input-container d-flex flex-row mb-3">
             <p class="w-25 fs-5 fw-bold">Email</p>
-            <input type="text" class="form-control" id="emailProfile" disabled/>
+            <input type="text" class="form-control" id="emailProfile" />
+          </div>
+          <div class="input-container d-flex flex-row mb-3">
+            <p class="w-25 fs-5 fw-bold">Password</p>
+            <input type="password" class="form-control" />
           </div>
           <div class="input-container d-flex flex-row mb-3 justify-content-end">
-            <button type="button" class="btn btn-primary" id="save-change-btn">Save Change</button>
+            <button type="button" class="btn btn-primary">Save Change</button>
           </div>
         </div>
-        </form>
       </div>
     </div>
     <!-- Boostrap Popper -->
@@ -206,50 +212,18 @@
       type="text/javascript"
       src="https://cdn.datatables.net/v/bs5/dt-1.13.1/date-1.2.0/sb-1.4.0/sl-1.5.0/datatables.min.js"
     ></script>
-  
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
       $(document).ready(function () {
-        // When Submit button is clicked
-        $("#save-change-btn").click(function () {
-          // Get the value of the input fields
-          var username = $("#usernameProfile").val();
-          var ownername = $("#ownernameProfile").val();
-          var useremail = $("#emailProfile").val();
-
-          $.ajax({
-            url: "/updateProfile",
-            type: "POST",
-            data: {
-              usernameProfile: username,
-              ownernameProfile: ownername,
-              emailProfile: useremail,
-            },
-            success: function (data) {
-            console.log(data);
-            },
-          });
-
-          // Check if the input fields are empty
-          if (username == "" || ownername == "") {
-            console.logs("Please fill in all the fields");
-            return false;
-          }
-        });
-
         $.ajax({
           url: "/getAccount",
           type: "GET",
           dataType: "json",
           success: function (data) {
             console.log(data);
-
-            $("#usernameProfile").val(data[0].seller_username);
-            $("#ownernameProfile").val(data[0].seller_name);
-            $("#emailProfile").val(data[0].email);
+            $("#emailProfile").val(data);
           },
         });
+        // const emailInput = document.getElementById("emailProfile");
       });
     </script>
   </body>

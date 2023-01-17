@@ -61,7 +61,11 @@ const db = admin.firestore();
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -83,89 +87,89 @@ const firebase = initializeApp(firebaseConfig);
 
 const auth = admin.auth();
 // URL routing - exact match with browser url
-app.post("/register", async (req, res) => {
-  const seller_name = req.body.seller_name;
-  const seller_email = req.body.seller_email;
-  const seller_username = req.body.seller_username;
-  const seller_password = req.body.seller_password;
+// app.post("/register", async (req, res) => {
+//   const seller_name = req.body.seller_name;
+//   const seller_email = req.body.seller_email;
+//   const seller_username = req.body.seller_username;
+//   const seller_password = req.body.seller_password;
 
-  const shop_name = req.body.shop_name;
-  const shop_rating = 0.0;
-  const shop_tel = req.body.shop_tel;
-  const shop_open = req.body.shop_open;
-  const shop_close = req.body.shop_close;
-  const shop_addr1 = req.body.shop_addr1;
-  const shop_addr2 = req.body.shop_addr2;
-  const shop_city = req.body.shop_city;
-  const shop_postcode = req.body.shop_postcode;
-  const shop_state = req.body.shop_state;
-  const shop_latitude = req.body.shop_latitude;
-  const shop_longitude = req.body.shop_longitude;
+//   const shop_name = req.body.shop_name;
+//   const shop_rating = 0.0;
+//   const shop_tel = req.body.shop_tel;
+//   const shop_open = req.body.shop_open;
+//   const shop_close = req.body.shop_close;
+//   const shop_addr1 = req.body.shop_addr1;
+//   const shop_addr2 = req.body.shop_addr2;
+//   const shop_city = req.body.shop_city;
+//   const shop_postcode = req.body.shop_postcode;
+//   const shop_state = req.body.shop_state;
+//   const shop_latitude = req.body.shop_latitude;
+//   const shop_longitude = req.body.shop_longitude;
 
-  try {
-    const { user } = await auth.createUser({
-      email: seller_email,
-      password: seller_password,
-      displayName: seller_username,
-    });
+//   try {
+//     const { user } = await auth.createUser({
+//       email: seller_email,
+//       password: seller_password,
+//       displayName: seller_username,
+//     });
 
-    const shopRef = db.collection("shop");
-    const currentCount = (await shopRef.get()).size;
-    let count = currentCount;
-    count++;
-    let shopid = "SH0000" + count;
+//     const shopRef = db.collection("shop");
+//     const currentCount = (await shopRef.get()).size;
+//     let count = currentCount;
+//     count++;
+//     let shopid = "SH0000" + count;
 
-    // Insert additional data into Firestore
-    await db.collection("seller").doc(seller_email).set({
-      seller_name: seller_name,
-      seller_username: seller_username,
-      seller_email: seller_email,
-      seller_password: seller_password,
-    });
+//     // Insert additional data into Firestore
+//     await db.collection("seller").doc(seller_email).set({
+//       seller_name: seller_name,
+//       seller_username: seller_username,
+//       seller_email: seller_email,
+//       seller_password: seller_password,
+//     });
 
-    // Insert additional data into Firestore
-    await db.collection("shop").doc(shopid).set({
-      shop_owner: seller_name,
-      shop_name: shop_name,
-      shop_rating: shop_rating,
-      shop_tel: shop_tel,
-      shop_open: shop_open,
-      shop_close: shop_close,
-      shop_addr1: shop_addr1,
-      shop_addr2: shop_addr2,
-      shop_city: shop_city,
-      shop_postcode: shop_postcode,
-      shop_state: shop_state,
-      shop_latitude: shop_latitude,
-      shop_longitude: shop_longitude,
-    });
+//     // Insert additional data into Firestore
+//     await db.collection("shop").doc(shopid).set({
+//       shop_owner: seller_name,
+//       shop_name: shop_name,
+//       shop_rating: shop_rating,
+//       shop_tel: shop_tel,
+//       shop_open: shop_open,
+//       shop_close: shop_close,
+//       shop_addr1: shop_addr1,
+//       shop_addr2: shop_addr2,
+//       shop_city: shop_city,
+//       shop_postcode: shop_postcode,
+//       shop_state: shop_state,
+//       shop_latitude: shop_latitude,
+//       shop_longitude: shop_longitude,
+//     });
 
-    res.send("User registered successfully!");
-    res.sendFile(path.resolve(__dirname, "../client/login.html"));
-  } catch (error) {
-    res.send("Error: " + error);
-  }
-});
+//     res.send("User registered successfully!");
+//     res.sendFile(path.resolve(__dirname, "../client/login.html"));
+//   } catch (error) {
+//     res.send("Error: " + error);
+//   }
+// });
 
-app.post("/login", (req, res) => {
-  const { email, password } = req.body;
-  console.log(email);
-  console.log(password);
+// app.post("/login", (req, res) => {
+//   const { email, password } = req.body;
+//   console.log(email);
+//   console.log(password);
 
-  const auth = getAuth();
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed in
-      const user = userCredential.user;
-      res.redirect("/dashboard");
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log("Login failed");
-      res.redirect("/login");
-    });
-});
+//   const auth = getAuth();
+//   signInWithEmailAndPassword(auth, email, password)
+//     .then((userCredential) => {
+//       // Signed in
+//       const user = userCredential.user;
+//       res.redirect("/dashboard");
+//     })
+//     .catch((error) => {
+//       const errorCode = error.code;
+//       const errorMessage = error.message;
+//       console.log("Login failed");
+//       res.redirect("/login");
+//     });
+// });
 
 // URL routing - exact match with browser url
 app.get("/", (req, res) => {
@@ -183,43 +187,23 @@ app.get("/login", function (req, res) {
 //   res.sendFile(path.resolve(__dirname, "../client/add-product.html"));
 // });
 
-app.post("/login", (req, res) => {
-  const { email, password } = req.body;
-  console.log(email);
-  console.log(password);
+// app.post("/forgotpass", (req, res) => {
+//   const { email } = req.body;
+//   console.log(email);
 
-  const auth = getAuth();
-  signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed in
-      const user = userCredential.user;
-      res.redirect("/profile");
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log("Login failed");
-      res.redirect("/login");
-    });
-});
+//   const auth = getAuth();
 
-app.post("/forgotpass", (req, res) => {
-  const { email } = req.body;
-  console.log(email);
-
-  const auth = getAuth();
-
-  sendPasswordResetEmail(auth, email)
-    .then(() => {
-      res.send("Password reset email sent");
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log("Login failed");
-      res.redirect("/login");
-    });
-});
+//   sendPasswordResetEmail(auth, email)
+//     .then(() => {
+//       res.send("Password reset email sent");
+//     })
+//     .catch((error) => {
+//       const errorCode = error.code;
+//       const errorMessage = error.message;
+//       console.log("Login failed");
+//       res.redirect("/login");
+//     });
+// });
 
 app.get("/profile", (req, res) => {
   const auth = getAuth();
@@ -258,19 +242,19 @@ app.get("/profile", (req, res) => {
   }
 });
 
-app.get("/getAccount", (req, res) => {
-  const auth = getAuth();
-  const user = auth.currentUser;
+// app.get("/getAccount", (req, res) => {
+//   const auth = getAuth();
+//   const user = auth.currentUser;
 
-  // create an array
-  const accountData = [
-    {
-      email: user.email,
-    },
-  ];
+//   // create an array
+//   const accountData = [
+//     {
+//       email: user.email,
+//     },
+//   ];
 
-  res.json(accountData);
-});
+//   res.json(accountData);
+// });
 
 // DASHBOARD PAGE
 app.get("/dashboard", (req, res) => {
@@ -351,7 +335,6 @@ app.get("/getOrderStatus", async (req, res) => {
     COMPLETED: 0,
     CANCELLED: 0,
   };
-
   // Iterate through the orders and update the count for each status
   orderSnapshot.docs.forEach((item) => {
     const status = item.data().order_status;
@@ -758,6 +741,12 @@ app.get("/getMonthlyRevenueFiltered", async (req, res) => {
 //   res.json(products);
 // });
 
+app.put("/addStock", async (req, res) => {
+  const { sku, stock } = req.body;
+
+  console.log("Stock updated successfully");
+});
+
 // GET ALL PRODUCTS - FOR ADD PRODUCT PAGE (FOR DROPDOWN) - USING PRODUCTS COLLECTION
 app.get("/getProducts", async (req, res) => {
   // Get a reference to the products collection
@@ -869,6 +858,8 @@ app.post("/postProduct", (req, res) => {
   const product_description = req.body.product_description;
   const stock = req.body.stock;
   const under_category = req.body.under_category;
+  const image =
+    "https://firebasestorage.googleapis.com/v0/b/odds-38a12.appspot.com/o/product%2FFRF%2FPicture5.png?alt=media&token=ebb9cdb6-139c-4999-92b1-b282b0dbdc25";
 
   // image & owned by
 
@@ -885,6 +876,7 @@ app.post("/postProduct", (req, res) => {
     sold_item: 0,
     stock: parseFloat(stock),
     under_category: under_category,
+    image: image,
   });
 
   // send a response to the client
@@ -1098,12 +1090,12 @@ app.get("/getProductRanking", async (req, res) => {
 
   // Initialize an array to hold the order objects
   const orders = [];
-
+  const productRanking = [];
   // Initialize a new array to hold the ordered products
   let orderedProducts = [];
 
   // variables to calculate product ranking
-  const productRanking = [];
+
   let currentRank = 1;
 
   // Wrap the loop in an async function
@@ -1197,29 +1189,33 @@ app.get("/getProductRanking", async (req, res) => {
 
     // Add the resolved orders to the orders array
     // orders.push(...resolvedOrders);
+    // console.log("RESOLVED ORDERS: " + JSON.stringify(resolvedOrders));
 
     // Iterate over the resolved orders
     for (const order of resolvedOrders) {
       // Iterate over the products in each order
       for (const product of order.products) {
+        console.log("product" + JSON.stringify(product));
         // Check if the product already exists in the productRanking array
         const existingProduct = productRanking.find(
-          (p) => p.sku === product.sku
+          (p) => p.product_name === product.name
         );
+        // console.log("p.sku" + p.sku);
+        // console.log("product.sku" + product.sku);
         if (existingProduct) {
           // If the product already exists, update the sales and quantity for that product
           existingProduct.sales += product.quantity * product.price;
-          existingProduct.quantity += product.quantity;
+          existingProduct.quantity += parseInt(product.quantity);
         } else {
           // If the product doesn't exist, create a new object for the product in the productRanking array
           productRanking.push({
-            product_ranking: currentRank,
+            // product_ranking: currentRank,
             product_name: product.name,
             sales: product.quantity * product.price,
-            quantity: product.quantity,
+            quantity: parseInt(product.quantity),
           });
           // Increment currentRank by 1
-          currentRank++;
+          // currentRank++;
         }
         // Create an object for the ordered product with the product name, quantity, and sales
         let orderedProducts = {
@@ -1249,8 +1245,264 @@ app.get("/getProductRanking", async (req, res) => {
   // console.log(JSON.stringify(productRanking, null, 2));
   // console.log("Number of orders:", productRanking.length);
   // console.log("GET all orders successfully");
+  productRanking.sort((a, b) => b.sales - a.sales);
+  let rank = 1;
+  productRanking.forEach((product) => {
+    product.product_ranking = rank;
+    rank++;
+    product.sales = "RM " + product.sales.toFixed(2);
+  });
 
   res.json(productRanking);
+});
+
+app.post("/register", async (req, res) => {
+  const seller_name = req.body.seller_name;
+  const seller_email = req.body.seller_email;
+  const seller_username = req.body.seller_username;
+  const seller_password = req.body.seller_password;
+
+  const shop_name = req.body.shop_name;
+  const shop_rating = 0.0;
+  const shop_tel = req.body.shop_tel;
+  const shop_open = req.body.shop_open;
+  const shop_close = req.body.shop_close;
+  const shop_addr1 = req.body.shop_addr1;
+  const shop_addr2 = req.body.shop_addr2;
+  const shop_city = req.body.shop_city;
+  const shop_postcode = req.body.shop_postcode;
+  const shop_state = req.body.shop_state;
+  const shop_latitude = req.body.shop_latitude;
+  const shop_longitude = req.body.shop_longitude;
+
+  try {
+    const { user } = await auth.createUser({
+      email: seller_email,
+      password: seller_password,
+      displayName: seller_username,
+    });
+
+    const shopRef = db.collection("shop");
+    const currentCount = (await shopRef.get()).size;
+    let count = currentCount;
+    count++;
+    let shopid = "SH0000" + count;
+
+    // Insert additional data into Firestore
+    await db.collection("seller").doc(seller_email).set({
+      seller_name: seller_name,
+      seller_username: seller_username,
+      seller_email: seller_email,
+      shop_id: shopid,
+    });
+
+    // Insert additional data into Firestore
+    await db.collection("shop").doc(shopid).set({
+      shop_owner: seller_name,
+      shop_name: shop_name,
+      shop_rating: shop_rating,
+      shop_tel: shop_tel,
+      shop_open: shop_open,
+      shop_close: shop_close,
+      shop_addr1: shop_addr1,
+      shop_addr2: shop_addr2,
+      shop_city: shop_city,
+      shop_postcode: shop_postcode,
+      shop_state: shop_state,
+      shop_latitude: shop_latitude,
+      shop_longitude: shop_longitude,
+    });
+
+    res.send("User registered successfully!");
+    res.sendFile(path.resolve(__dirname, "../client/login.html"));
+  } catch (error) {
+    res.send("Error: " + error);
+  }
+});
+
+app.get("/getShop", (req, res) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const db = admin.firestore();
+
+  if (user) {
+    // Get the user data from the 'users' collection, using the user's email as the document ID
+    const userRef = db
+      .collection("shop")
+      .where("shop_email", "==", user.email)
+      .get();
+    console.log(user.email);
+
+    if (userRef.empty) {
+      console.log("No matching documents.");
+      return;
+    }
+
+    userRef.forEach((doc) => {
+      console.log(doc.id, "=>", doc.data());
+    });
+  }
+});
+
+app.post("/register", async (req, res) => {
+  const seller_name = req.body.seller_name;
+  const seller_email = req.body.seller_email;
+  const seller_username = req.body.seller_username;
+  const seller_password = req.body.seller_password;
+
+  const shop_name = req.body.shop_name;
+  const shop_rating = 0.0;
+  const shop_tel = req.body.shop_tel;
+  const shop_open = req.body.shop_open;
+  const shop_close = req.body.shop_close;
+  const shop_addr1 = req.body.shop_addr1;
+  const shop_addr2 = req.body.shop_addr2;
+  const shop_city = req.body.shop_city;
+  const shop_postcode = req.body.shop_postcode;
+  const shop_state = req.body.shop_state;
+  const shop_latitude = req.body.shop_latitude;
+  const shop_longitude = req.body.shop_longitude;
+
+  try {
+    const { user } = await auth.createUser({
+      email: seller_email,
+      password: seller_password,
+      displayName: seller_username,
+    });
+
+    const shopRef = db.collection("shop");
+    const currentCount = (await shopRef.get()).size;
+    let count = currentCount;
+    count++;
+    let shopid = "SH0000" + count;
+
+    // Insert additional data into Firestore
+    await db.collection("seller").doc(seller_email).set({
+      seller_name: seller_name,
+      seller_username: seller_username,
+      seller_email: seller_email,
+      shop_id: shopid,
+    });
+
+    // Insert additional data into Firestore
+    await db.collection("shop").doc(shopid).set({
+      shop_owner: seller_name,
+      shop_name: shop_name,
+      shop_rating: shop_rating,
+      shop_tel: shop_tel,
+      shop_open: shop_open,
+      shop_close: shop_close,
+      shop_addr1: shop_addr1,
+      shop_addr2: shop_addr2,
+      shop_city: shop_city,
+      shop_postcode: shop_postcode,
+      shop_state: shop_state,
+      shop_latitude: shop_latitude,
+      shop_longitude: shop_longitude,
+    });
+
+    res.send("User registered successfully!");
+    res.sendFile(path.resolve(__dirname, "../client/login.html"));
+  } catch (error) {
+    res.send("Error: " + error);
+  }
+});
+
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  console.log(email);
+  console.log(password);
+
+  const auth = getAuth();
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      res.redirect("/dashboard");
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log("Login failed");
+      res.redirect("/login");
+    });
+});
+
+app.post("/forgotpass", (req, res) => {
+  const { email } = req.body;
+  console.log(email);
+
+  const auth = getAuth();
+
+  sendPasswordResetEmail(auth, email)
+    .then(() => {
+      res.send("Password reset email sent");
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log("Login failed");
+      res.redirect("/login");
+    });
+});
+
+app.get("/getAccount", (req, res) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const db = admin.firestore();
+
+  if (user) {
+    // Get the user data from the 'users' collection, using the user's email as the document ID
+    const userRef = db.collection("seller").doc(user.email);
+    console.log(user.email);
+
+    // Get the user data
+    userRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          // create an array
+          const accountData = [
+            {
+              email: user.email,
+              seller_username: doc.data().seller_username,
+              seller_name: doc.data().seller_name,
+            },
+          ];
+          res.json(accountData);
+        } else {
+          console.log("No such document!");
+        }
+        //res.redirect("/profile");
+      })
+      .catch((error) => {
+        console.log("Error getting document:", error);
+      });
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.post("/updateProfile", (req, res) => {
+  const sellername = req.body.ownernameProfile;
+  const selleremail = req.body.emailProfile;
+  const sellerusername = req.body.usernameProfile;
+  console.log(sellername);
+  console.log(selleremail);
+  console.log(sellerusername);
+
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const db = admin.firestore();
+
+  const userRef = db.collection("seller").doc(selleremail).set(
+    {
+      seller_name: sellername,
+      seller_email: selleremail,
+      seller_username: sellerusername,
+    },
+    { merge: true }
+  );
 });
 
 app.listen(3000, () => {

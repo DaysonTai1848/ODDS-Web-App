@@ -33,7 +33,7 @@
   <body class="h-100">
     <nav class="navbar bg-dark">
       <div class="container-fluid">
-        <a class="navbar-brand text-light fw-bold" href="/dashboard">
+        <a class="navbar-brand text-light fw-bold" href="#">
           <!-- <img
             src="/docs/5.2/assets/brand/bootstrap-logo.svg"
             alt="Logo"
@@ -173,7 +173,78 @@
         </div>
 
         <hr />
-        <div class="card m-4 p-5"></div>
+        <form method="post" action="/updateShop">
+        <div class="card m-4 p-5">
+          <h3 class="mb-5">Shop Profile</h3>
+          <div class="input-container d-flex flex-row mb-3">
+            <p class="w-25 fs-5 fw-bold">Shop Name</p>
+            <input type="text" class="form-control" id="shopName" required/>
+          </div>
+          <div class="input-container d-flex flex-row mb-3">
+            <p class="w-25 fs-5 fw-bold">Shop Tel</p>
+            <input type="text" class="form-control" id="shopTel" required/>
+          </div>
+          <div class="input-container d-flex flex-row mb-3">
+            <p class="w-25 fs-5 fw-bold">Opening Time</p>
+            <input type="text" class="form-control" id="shopOpening" required/>
+          </div>
+          <div class="input-container d-flex flex-row mb-3">
+            <p class="w-25 fs-5 fw-bold">Closing Time</p>
+            <input type="text" class="form-control" id="shopClosing" required/>
+          </div>
+          <div class="input-container d-flex flex-row mb-3">
+            <p class="w-25 fs-5 fw-bold">Address 1</p>
+            <input type="text" class="form-control" id="shopAddr1" required/>
+          </div>
+          <div class="input-container d-flex flex-row mb-3">
+            <p class="w-25 fs-5 fw-bold">Address 2</p>
+            <input type="text" class="form-control" id="shopAddr2" required/>
+          </div>
+          <div class="input-container d-flex flex-row mb-3">
+            <p class="w-25 fs-5 fw-bold">City</p>
+            <input type="text" class="form-control" id="shopCity" required/>
+          </div>
+          <div class="input-container d-flex flex-row mb-3">
+            <p class="w-25 fs-5 fw-bold">Postcode</p>
+            <input type="text" class="form-control" id="shopPostcode" minlength="5" maxlength="5" required/>
+          </div>
+          <div class="input-container d-flex flex-row mb-3">
+            <p class="w-25 fs-5 fw-bold">State</p>
+            <select name="state" id="shopState" class="form-control" required>
+                                  <optgroup label="States">
+                                    <option value="Johor">Johor</option>
+                                    <option value="Kedah">Kedah</option>
+                                    <option value="Kelantan">Kelantan</option>
+                                    <option value="Melacca">Melacca</option>
+                                    <option value="Negeri Sembilan">Negeri Sembilan</option>
+                                    <option value="Pahang">Pahang</option>
+                                    <option value="Penang">Penang</option>
+                                    <option value="Perak">Perak</option>
+                                    <option value="Perlis">Perlis</option>
+                                    <option value="Sabah">Sabah</option>
+                                    <option value="Sarawak">Sarawak</option>
+                                    <option value="Selangor">Selangor</option>
+                                    <option value="Terengganu">Terengganu</option>
+                                  </optgroup>
+                                  <optgroup label="Federal Territories">
+                                    <option value="Kuala Lumpur">Kuala Lumpur</option>
+                                    <option value="Labuan">Labuan</option>
+                                    <option value="Putrajaya">Putrajaya</option>
+                    </select>
+          </div>
+          <div class="input-container d-flex flex-row mb-3">
+            <p class="w-25 fs-5 fw-bold">Latitude</p>
+            <input type="text" class="form-control" id="shopLatitude" required/>
+          </div>
+          <div class="input-container d-flex flex-row mb-3">
+            <p class="w-25 fs-5 fw-bold">Longitude</p>
+            <input type="text" class="form-control" id="shopLongitude" required/>
+          </div>
+          <div class="input-container d-flex flex-row mb-3 justify-content-end">
+            <button type="button" class="btn btn-primary" id="save-change-btn">Save Change</button>
+          </div>
+        </div>
+        </form>
       </div>
     </div>
     <!-- Boostrap Popper -->
@@ -187,5 +258,59 @@
       type="text/javascript"
       src="https://cdn.datatables.net/v/bs5/dt-1.13.1/date-1.2.0/sb-1.4.0/sl-1.5.0/datatables.min.js"
     ></script>
+  
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // When Submit button is clicked
+        $("#save-change-btn").click(function () {
+          // Get the value of the input fields
+          var shopname = $("#shopName").val();
+          var shoptel = $("#shopTel").val();
+          var shopopen = $("#shopOpening").val();
+          var shopclose = $("#shopClosing").val();
+          var shopaddr1 = $("#shopAddr1").val();
+          var shopaddr2 = $("#shopAddr2").val();
+          var shopcity = $("#shopCity").val();
+          var shoppostcode = $("#shopPostcode").val();
+          var shopstate = $("#shopState").val();
+          var shoplatitude = $("#shopLatitude").val();
+          var shoplongitude = $("#shopLongitude").val();
+
+          $.ajax({
+            url: "/updateShop",
+            type: "POST",
+            data: {
+              usernameProfile: username,
+              ownernameProfile: ownername,
+              emailProfile: useremail,
+            },
+            success: function (data) {
+            console.log(data);
+            },
+          });
+
+          // Check if the input fields are empty
+          if (username == "" || ownername == "") {
+            console.logs("Please fill in all the fields");
+            return false;
+          }
+        });
+
+        $.ajax({
+          url: "/getAccount",
+          type: "GET",
+          dataType: "json",
+          success: function (data) {
+            console.log(data);
+
+            $("#usernameProfile").val(data[0].seller_username);
+            $("#ownernameProfile").val(data[0].seller_name);
+            $("#emailProfile").val(data[0].email);
+          },
+        });
+      });
+    </script>
   </body>
 </html>
