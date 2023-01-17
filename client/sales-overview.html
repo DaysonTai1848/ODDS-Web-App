@@ -313,6 +313,43 @@
     <!-- Execute Script -->
     <script type="module">
       $(document).ready(function () {
+        $.ajax({
+          url: "/getMonthlyRevenue",
+          type: "GET",
+          success: function(data) {
+            // const labels = ["May", "June", "July", "August", "September", "October"];
+            const labels = data.month;
+            console.log(labels)
+            const chartData = {
+              labels: labels,
+              datasets: [
+                {
+                  label: "Sales Revenue",
+
+                  data: data.revenue,
+                },
+              ],
+            };
+            const config = {
+              type: "line",
+              data: chartData,
+              options: {
+                scales: {
+                  y:{
+                    beginAtZero: true
+                  }
+                }
+              },
+            };
+
+            var myChart = new Chart(document.getElementById("myChart"), config);
+            var revenueSum = data.revenue.reduce((a, b) => a + b, 0);
+            $("#api-sales").html("RM" + revenueSum.toFixed(2));
+          },
+          error: function(data) {
+            console.log(data);
+          }
+        });
         
 
         // Initialize start datepicker
@@ -330,13 +367,14 @@
 
         // Initialize number of the 3 metrics
         $.get("/getOrders", function (items) {
-          // $("#api-order").html(items[0].order_number);
-          // $("#api-cancelled").html(0);
-          // $("#api-sales").html("RM" + (59.3).toFixed(2));
-          $("#api-order").html(14);
+          $("#api-order").html(items[0].order_number);
           $("#api-cancelled").html(0);
-          $("#api-sales").html("RM" + (416.5).toFixed(2));
+          // $("#api-order").html(14);
+          // $("#api-cancelled").html(0);
+          // $("#api-sales").html("RM" + (416.5).toFixed(2));
         });
+
+        
 
         const labels = ["May", "June", "July", "August", "September", "October"];
         const chartData = {
@@ -357,28 +395,29 @@
             {
               label: "Sales Revenue",
 
-              data: [67.00, 77.00, 121.00],
+              data: ["67.00", 77.00, 121.00],
             },
           ],
         };
 
       
-        const config = {
-          type: "line",
-          data: chartData,
-          options: {
-            scales: {
-              y:{
-                beginAtZero: true
-              }
-            }
-          },
-        };
+        // const config = {
+        //   type: "line",
+        //   data: chartData,
+        //   options: {
+        //     scales: {
+        //       y:{
+        //         beginAtZero: true
+        //       }
+        //     }
+        //   },
+        // };
 
-        var myChart = new Chart(document.getElementById("myChart"), config);
+        // var myChart = new Chart(document.getElementById("myChart"), config);
 
         // Generate button clicked
         $("#generate-btn").click( function () {
+          
           // change metric
           $("#api-order").html(8);
           $("#api-cancelled").html(0);

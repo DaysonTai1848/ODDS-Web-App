@@ -314,6 +314,29 @@
           <div class="d-flex flex-row">
             <img src="order_icon.png" width="50px" height="50px" />
             <h1 class="ms-3">My Order</h1>
+            <div class="dropdown">
+              <button
+                class="btn btn-secondary dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Dropdown button
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <a
+                    class="dropdown-item"
+                    onclick="updateStatus(id, order_status)"
+                    >Action</a
+                  >
+                </li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li>
+                  <a class="dropdown-item" href="#">Something else here</a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -409,12 +432,11 @@
       </div>
     </div>
 
-    <div id="unpaid-dropdown" style="display: none">
+    <!-- <div id="unpaid-dropdown" style="display: none">
       <div class="dropdown">
         <button
           class="btn bg-danger text-white fw-bold dropdown-toggle"
           type="button"
-          id="dropdownMenuButton1"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
@@ -435,7 +457,6 @@
         <button
           class="btn bg-warning text-white fw-bold dropdown-toggle"
           type="button"
-          id="dropdownMenuButton1"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
@@ -456,7 +477,6 @@
         <button
           class="btn bg-info text-white fw-bold dropdown-toggle"
           type="button"
-          id="dropdownMenuButton1"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
@@ -477,7 +497,6 @@
         <button
           class="btn bg-success text-white fw-bold dropdown-toggle"
           type="button"
-          id="dropdownMenuButton1"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
@@ -498,7 +517,6 @@
         <button
           class="btn bg-secondary text-white fw-bold dropdown-toggle"
           type="button"
-          id="dropdownMenuButton1"
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
@@ -531,7 +549,11 @@
         <li><a class="dropdown-item">COMPLETED</a></li>
         <li><a class="dropdown-item">CANCELLED</a></li>
       </ul>
-    </div>
+    </div> -->
+    <button id="test-redraw" style="display: none">
+      Test Button Change Datatables Redraw
+    </button>
+
     <!-- Boostrap Popper -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
@@ -558,7 +580,70 @@
       // import dayjs from "dayjs";
       // var dayjs = require("dayjs");
 
+      function updateStatus() {
+        console.log("update status clicked");
+        console.dir("THIS: " + this);
+        console.log(this.document);
+        console.log(this["document"]);
+        // $.ajax({
+        //   url: "/editOrderStatus",
+        //   type: "PUT",
+        //   data: { id: id, order_status: order_status },
+        //   success: function (response) {
+        //     // Reload the DataTable using the ajax.reload() method
+        //     // table.ajax.reload();
+        //   },
+        // });
+      }
+
       $(document).ready(function () {
+        // HERE
+        $(".a").on("click", function () {
+          // var selectedOption = $(this).text();
+          // console.log("Selected option: " + selectedOption);
+          console.log("Hii");
+        });
+
+        $("#test-redraw").click(function () {
+          $.ajax({
+            url: "/editOrderStatus",
+            type: "PUT",
+            data: { id: "B1WuGGH29UfgRUFEMiRI", order_status: "UNPAID" },
+            success: function (response) {
+              // Reload the DataTable using the ajax.reload() method
+              table.ajax.reload();
+            },
+          });
+        });
+
+        // $("#test-redraw").click(function () {
+        //   // Search for the row with first column data "B1WuGGH29UfgRUFEMiRI"
+        //   table.search("B1WuGGH29UfgRUFEMiRI").draw();
+        //   // Get the index of the first row that matches the search
+        //   var rowIndex = table
+        //     .rows({ search: "applied" })
+        //     .indexes()
+        //     .toArray()[0];
+        //   // Select the row at the index
+        //   var row = table.row(rowIndex);
+        //   // Update the value of the 5th column
+        //   row.data()[4] = "Hahah";
+        //   // Redraw the table
+        //   table.draw();
+        // });
+
+        // $("#test-redraw").click(function () {
+        //   //Select the row whose first column data is "HAH"
+        //   var row = table
+        //     .row("td:eq(0):contains('B1WuGGH29UfgRUFEMiRI')")
+        //     .data();
+        //   console.log("ROW: " + row);
+        //   //Select the 5th column
+        //   var column = table.column(4);
+        //   console.log("COLUMN: " + column);
+        //   //Change the value of the cell in the selected row
+        //   column.data("Hahah").draw();
+        // });
         // Get the current URL
         const url = new URL(window.location.href);
         // Get the search params from the URL
@@ -602,7 +687,7 @@
             // },
             {
               targets: 0,
-              data: "order_id",
+              data: "order_by",
               width: "20%",
               className: "text-center",
               render: function (data, type) {
@@ -679,35 +764,131 @@
             },
             {
               targets: 4,
-              data: "order_status",
+              data: [
+                {
+                  data: "order_status",
+                  name: "order_status",
+                },
+                {
+                  data: "order_id",
+                  name: "order_id",
+                },
+              ],
               width: "20%",
               className: "text-center",
               render: function (data, type, row) {
-                // var orderStatusDropdown = $("#order-status-dropdown").clone();
-                var orderStatusDropdown = $("#order-status-dropdown").html();
-                var unpaidDropdown = $("#unpaid-dropdown").html();
-                var toDeliverDropdown = $("#to-deliver-dropdown").html();
-                var toPackDropdown = $("#to-pack-dropdown").html();
-                var completedDropdown = $("#completed-dropdown").html();
-                var cancelledDropdown = $("#cancelled-dropdown").html();
                 if (type === "display") {
-                  if (data == "UNPAID") {
-                    return unpaidDropdown;
+                  if (row.order_status == "UNPAID") {
+                    var customDropdown = `<div class="dropdown" id="${row.order_id}">
+                            <button
+                              class="btn bg-danger text-white fw-bold dropdown-toggle"
+                              type="button"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
+                              Unpaid
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                              <li>
+                                <a
+                                class="dropdown-item"
+                                onclick="updateStatus('CwWxjErTmzKsqzv93Mic', 'COMPLETED')"
+                                >Action</a>
+                              </li>
+                              <li><a class="dropdown-item" onclick="updateStatus(this)">UNPAID</a></li>
+                              <li><a class="dropdown-item" onclick="updateStatus(this)">TO-PACK</a></li>
+                              <li><a class="dropdown-item" onclick="updateStatus(this)">TO-DELIVER</a></li>
+                              <li><a class="dropdown-item" onclick="updateStatus(this)">COMPLETED</a></li>
+                              <li><a class="dropdown-item" onclick="updateStatus(this)">CANCELLED</a></li>
+                            </ul>
+                          </div>`;
+                    return customDropdown;
                   }
-                  if (data == "TO-PACK") {
-                    return toPackDropdown;
+                  if (row.order_status == "TO-PACK") {
+                    var customDropdown = `<div class="dropdown" id="${row.order_id}">
+                            <button
+                              class="btn bg-warning text-white fw-bold dropdown-toggle"
+                              type="button"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
+                              To-Pack
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                              <li><a class="dropdown-item">UNPAID</a></li>
+                              <li><a class="dropdown-item">TO-PACK</a></li>
+                              <li><a class="dropdown-item">TO-DELIVER</a></li>
+                              <li><a class="dropdown-item">COMPLETED</a></li>
+                              <li><a class="dropdown-item">CANCELLED</a></li>
+                            </ul>
+                          </div>`;
+                    return customDropdown;
                   }
-                  if (data == "TO-DELIVER") {
-                    return toDeliverDropdown;
+                  if (row.order_status == "TO-DELIVER") {
+                    var customDropdown = `<div class="dropdown" id="${row.order_id}">
+                            <button
+                              class="btn bg-info text-white fw-bold dropdown-toggle"
+                              type="button"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
+                              To-Deliver
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                              <li><a class="dropdown-item">UNPAID</a></li>
+                              <li><a class="dropdown-item">TO-PACK</a></li>
+                              <li><a class="dropdown-item">TO-DELIVER</a></li>
+                              <li><a class="dropdown-item">COMPLETED</a></li>
+                              <li><a class="dropdown-item">CANCELLED</a></li>
+                            </ul>
+                          </div>`;
+                    return customDropdown;
                   }
-                  if (data == "COMPLETED") {
-                    return completedDropdown;
+
+                  if (row.order_status == "COMPLETED") {
+                    var customDropdown = `<div class="dropdown" id="${row.order_id}">
+                            <button
+                              class="btn bg-success text-white fw-bold dropdown-toggle"
+                              type="button"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
+                              Completed
+                            </button>
+                            <ul class="dropdown-menu dropdown-option" aria-labelledby="dropdownMenuButton1">
+                              <li><a class="dropdown-item">UNPAID</a></li>
+                              <li><a class="dropdown-item">TO-PACK</a></li>
+                              <li><a class="dropdown-item">TO-DELIVER</a></li>
+                              <li><a class="dropdown-item">COMPLETED</a></li>
+                              <li><a class="dropdown-item">CANCELLED</a></li>
+                            </ul>
+                          </div>`;
+                    return customDropdown;
                   }
-                  if (data == "CANCELLED") {
-                    return cancelledDropdown;
+                  if (row.order_status == "CANCELLED") {
+                    var customDropdown = `<div class="dropdown" id="${row.order_id}">
+                            <button
+                              class="btn bg-secondary text-white fw-bold dropdown-toggle"
+                              type="button"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                            >
+                              Cancelled
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                              <li><a class="dropdown-item">UNPAID</a></li>
+                              <li><a class="dropdown-item">TO-PACK</a></li>
+                              <li><a class="dropdown-item">TO-DELIVER</a></li>
+                              <li><a class="dropdown-item">COMPLETED</a></li>
+                              <li><a class="dropdown-item">CANCELLED</a></li>
+                            </ul>
+                          </div>`;
+                    return customDropdown;
                   }
                 }
-                return data;
+
+                // if not for display, render order status
+                return row.order_status;
               },
             },
           ],

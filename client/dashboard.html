@@ -334,10 +334,9 @@
         const cancelledContainer = document.getElementById("cancelled-container");
 
         // set the innerHTML of each element to the corresponding value from the data
-        unpaidContainer.innerHTML = 5;
-        toPackContainer.innerHTML = 4;
-        // unpaidContainer.innerHTML = data.UNPAID;
-        // toPackContainer.innerHTML = data["TO-PACK"];
+      
+        unpaidContainer.innerHTML = data.UNPAID;
+        toPackContainer.innerHTML = data["TO-PACK"];
         toDeliverContainer.innerHTML = data["TO-DELIVER"];
         completedContainer.innerHTML = data.COMPLETED;
         cancelledContainer.innerHTML = data.CANCELLED;

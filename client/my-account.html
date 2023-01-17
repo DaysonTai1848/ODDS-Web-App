@@ -189,7 +189,7 @@
           </div>
           <div class="input-container d-flex flex-row mb-3">
             <p class="w-25 fs-5 fw-bold">Email</p>
-            <input type="text" class="form-control" />
+            <input type="text" class="form-control" id="emailProfile" />
           </div>
           <div class="input-container d-flex flex-row mb-3">
             <p class="w-25 fs-5 fw-bold">Password</p>
@@ -212,5 +212,19 @@
       type="text/javascript"
       src="https://cdn.datatables.net/v/bs5/dt-1.13.1/date-1.2.0/sb-1.4.0/sl-1.5.0/datatables.min.js"
     ></script>
+    <script>
+      $(document).ready(function () {
+        $.ajax({
+          url: "/getAccount",
+          type: "GET",
+          dataType: "json",
+          success: function (data) {
+            console.log(data);
+            $("#emailProfile").val(data);
+          },
+        });
+        // const emailInput = document.getElementById("emailProfile");
+      });
+    </script>
   </body>
 </html>
