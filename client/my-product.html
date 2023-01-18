@@ -268,13 +268,13 @@
                     >My Account</a
                   >
                 </li>
-                <li>
+                <!-- <li>
                   <a
                     href="/shop-profile"
                     class="link-dark d-inline-flex text-decoration-none rounded ms-3"
                     >Shop Profile</a
                   >
-                </li>
+                </li> -->
               </ul>
             </div>
           </li>
@@ -313,6 +313,7 @@
               class="btn-add-stock me-3 btn btn-outline-dark btn-rounded bg-white text-dark hover:bg-purple hover:text-white"
               data-bs-toggle="modal"
               id="addStockModalBtn"
+              style="display: none"
             >
               Add Stock
             </button>
@@ -517,9 +518,8 @@
                   width: 200,
                   className: "text-center",
                   render: function (data, type) {
-                    var link = $("<a></a>")
-                      .text(data)
-                      .attr("href", "/product-detail?product_id=" + data);
+                    var link = $("<a></a>").text(data);
+                    // .attr("href", "/product-detail?product_id=" + data);
                     // apply the default style
                     link.css({
                       color: "black",

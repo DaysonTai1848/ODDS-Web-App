@@ -1346,9 +1346,9 @@ app.post("/register", async (req, res) => {
       shop_latitude: shop_latitude,
       shop_longitude: shop_longitude,
     });
-
-    res.send("User registered successfully!");
-    res.sendFile(path.resolve(__dirname, "../client/login.html"));
+    res.redirect("/login");
+    // res.send("User registered successfully!");
+    // res.sendFile(path.resolve(__dirname, "../client/login.html"));
   } catch (error) {
     res.send("Error: " + error);
   }
