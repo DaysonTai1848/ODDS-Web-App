@@ -2,7 +2,7 @@
 
 Welcome to our web project! This project consists of two main folders: `client` and `server`. In order to run the system, the user must first download the dependencies for both folders.
 
-## Installating Dependencies
+## Installing Dependencies
 
 1. First, navigate to the `client` folder using the terminal or command prompt. Then, run `npm install` command to download the dependencies for the client-side of the project:
 
