@@ -929,7 +929,7 @@ app.get("/getCategories", async (req, res) => {
 });
 
 // POST ONE PRODUCT - FOR ADD PRODUCT PAGE
-app.post("/postProduct", (req, res) => {
+app.post("/postProduct", async (req, res) => {
   // get the form data from the request body
   const price = req.body.price;
   const product_name = req.body.product_name;
@@ -940,12 +940,13 @@ app.post("/postProduct", (req, res) => {
     "https://firebasestorage.googleapis.com/v0/b/odds-38a12.appspot.com/o/product%2FFRF%2FPicture5.png?alt=media&token=ebb9cdb6-139c-4999-92b1-b282b0dbdc25";
 
   // image & owned by
+  var sequence_no = "0010";
 
   // Get a reference to the products collection
   const productsRef = db.collection("products");
 
   // Get a list of cities from your database
-  productsRef.doc("BBC-0010").set({
+  productsRef.doc(under_category + "-" + sequence_no).set({
     // price: Math.round(price * 100) / 100,
     price: parseFloat(price),
     product_description: product_description,
