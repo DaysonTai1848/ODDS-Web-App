@@ -28,36 +28,6 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
-// // Initialize Firebase Authentication
-// // const initializeApp = require("firebase/app");
-// // require("firebase/auth");
-// // const firebase = require("firebase");
-// const firebase = require("firebase/app");
-// require("firebase/auth");
-// /**
-//  * You can find these values in the Firebase project settings under the
-//  *  "General" tab. The "Your applications" section will have the "Web API Key"
-//  * (apiKey), "Auth Domain" (authDomain), "Database URL" (databaseURL), "Project ID"
-//  * (projectId), "Storage Bucket" (storageBucket), "Messaging Sender ID"
-//  * (messagingSenderId), and "App ID" (appId).
-// Note that the API Key is not the same as the project id.
-//  */
-// const firebaseConfig = {
-//   apiKey: "AIzaSyA0TTeJNqO7DhKwhJkR13dmT2-245_ZoAo",
-//   authDomain: "odds-38a12.firebaseapp.com",
-//   databaseURL: "https://odds-38a12-default-rtdb.firebaseio.com",
-//   projectId: "odds-38a12",
-//   storageBucket: "odds-38a12.appspot.com",
-//   messagingSenderId: "948888911022",
-//   appId: "1:948888911022:web:8d2b477205aa82ef49c13f",
-//   measurementId: "G-LK9E235399",
-// };
-// firebase.initializeApp(firebaseConfig);
-// const auth = firebase.auth();
-// // const firebase = initializeApp(firebaseConfig);
-// // const auth = firebase.auth();
-// // alert(auth);
-
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
@@ -283,14 +253,19 @@ app.get("/my-order", (req, res) => {
 
 // UPDATE ORDER STATUS - FOR MY ORDER PAGE
 app.put("/editOrderStatus", (req, res) => {
+  // Get order ID and order status from the request body
   const id = req.body.id;
   const order_status = req.body.order_status;
+
+  // Get a reference to the Firestore database
   const orderRef = db.collection("order").doc(id);
   orderRef
+    // Update the order status
     .update({ order_status: order_status })
     .then(() => {
       res.json({ message: "Order status updated successfully." });
     })
+    // Handle errors
     .catch((error) => {
       res
         .status(500)
@@ -773,20 +748,102 @@ app.get("/getMonthlyRevenueFiltered", async (req, res) => {
 // });
 
 app.put("/addStock", async (req, res) => {
-  const { sku, stock } = req.body;
+  try {
+    const products = req.body;
+    console.log("REQ.BODY", products);
 
-  console.log("Stock updated successfully");
+    for (let product of products) {
+      console.log("PRODUCT", product);
+      const productRef = db.collection("products").doc(product.product_id);
+      const snapshot = await productRef.get();
+      const currentStock = parseInt(snapshot.get("stock"));
+      console.log("product_id", product.product_id);
+      console.log("ADD STOCK AMOUNT", product.add_stock_amount);
+      console.log("TYPE OF ADD STOCK AMOUNT", typeof product.add_stock_amount);
+      console.log("CURRENT STOCK", currentStock);
+      await productRef
+        .update({
+          // stock: admin.firestore.FieldValue.increment(
+          //   parseInt(product.add_stock_amount)
+          stock: parseInt(product.add_stock_amount) + currentStock,
+        })
+        .catch((error) => {
+          console.error("ERR" + error);
+        });
+    }
+
+    res.status(200).json({ message: "Stock added successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
+
+// // GET ALL PRODUCTS - FOR ADD PRODUCT PAGE (FOR DROPDOWN) - USING PRODUCTS COLLECTION
+// app.get("/getProducts", async (req, res) => {
+//   // Get a reference to the products collection
+//   const productsRef = db.collection("products");
+
+//   // Get the query snapshot for the products collection
+//   const productsSnapshot = await productsRef.get();
+
+//   // Initialize an array to hold the product objects
+//   const products = [];
+
+//   // Wrap the loop in an async function
+//   const addProductData = async () => {
+//     // Create an array of product promises
+//     const productPromises = productsSnapshot.docs.map(async (item) => {
+//       // Create an object for the product
+//       const product = {
+//         product_id: item.id,
+//         image: item.data().image,
+//         price: item.data().price,
+//         product_description: item.data().product_description,
+//         product_name: item.data().product_name,
+//         product_status: item.data().product_status,
+//         sold_item: item.data().sold_item,
+//         stock: item.data().stock,
+//         under_category: item.data().under_category, // mapping needed
+//         stock_status: "IN STOCK", // default value
+//       };
+
+//       // Determine the stock_status based on the stock number
+//       if (product.stock === 0) {
+//         product.stock_status = "OUT OF STOCK";
+//       } else if (product.stock < 10) {
+//         product.stock_status = "RESTOCK NEEDED";
+//       }
+
+//       if (item.data().product_rating) {
+//         product.product_rating = item.data().product_rating;
+//       }
+
+//       // Return the product object
+//       return product;
+//     });
+
+//     // Wait for all of the product promises to resolve
+//     const resolvedProducts = await Promise.all(productPromises);
+
+//     // Add the resolved products to the products array
+//     products.push(...resolvedProducts);
+//   };
+
+//   // Call the async function
+//   await addProductData();
+
+//   // console.log(JSON.stringify(products, null, 2));
+//   // console.log("Number of products:", products.length);
+//   // console.log("GET all products successfully");
+
+//   res.json(products);
+// });
 
 // GET ALL PRODUCTS - FOR ADD PRODUCT PAGE (FOR DROPDOWN) - USING PRODUCTS COLLECTION
 app.get("/getProducts", async (req, res) => {
   // Get a reference to the products collection
   const productsRef = db.collection("products");
-
-  // Get the query snapshot for the products collection
   const productsSnapshot = await productsRef.get();
-
-  // Initialize an array to hold the product objects
   const products = [];
 
   // Wrap the loop in an async function
@@ -817,25 +874,15 @@ app.get("/getProducts", async (req, res) => {
       if (item.data().product_rating) {
         product.product_rating = item.data().product_rating;
       }
-
       // Return the product object
       return product;
     });
-
     // Wait for all of the product promises to resolve
     const resolvedProducts = await Promise.all(productPromises);
-
     // Add the resolved products to the products array
     products.push(...resolvedProducts);
   };
-
-  // Call the async function
   await addProductData();
-
-  // console.log(JSON.stringify(products, null, 2));
-  // console.log("Number of products:", products.length);
-  // console.log("GET all products successfully");
-
   res.json(products);
 });
 
@@ -1113,24 +1160,189 @@ app.get("/getOrderDetail", async (req, res) => {
   // console.log(order);
 });
 
+// // GET ALL ORDER - FOR MY ORDER PAGE
+// app.get("/getProductRanking", async (req, res) => {
+//   // Get a reference to the orders collection
+//   const ordersRef = db.collection("order");
+
+//   // Get the query snapshot for the orders collection
+//   const ordersSnapshot = await ordersRef.get();
+//   // console.log("Orders snapshot:", ordersSnapshot);
+
+//   // Initialize an array to hold the order objects
+//   const orders = [];
+//   const productRanking = [];
+//   // Initialize a new array to hold the ordered products
+//   let orderedProducts = [];
+
+//   // variables to calculate product ranking
+
+//   let currentRank = 1;
+
+//   // Wrap the loop in an async function
+//   const addOrderData = async () => {
+//     // Create an array of order promises
+//     const orderPromises = ordersSnapshot.docs.map(async (item) => {
+//       // Create an object for the order
+//       const order = {
+//         order_id: item.id,
+//         delivery_method: item.data().delivery_method,
+//         delivery_time: item.data().delivery_time,
+//         order_amount: item.data().order_amount,
+//         order_by: item.data().order_by,
+//         order_date: dayjs(item.data().order_date.toDate().toISOString()).format(
+//           "DD MMM YYYY"
+//         ),
+//         order_status: item.data().order_status,
+//         payment_method: item.data().payment_method,
+//         products: [],
+//         address: [],
+//         order_number: ordersSnapshot.size,
+//       };
+
+//       // order.push({ salesRevenue: sum });
+
+//       // console.log(
+//       //   "dayjs " + dayjs(item.data().order_date).format("DD MMM YYYY")
+//       // );
+
+//       // Get the query snapshot for the products subcollection
+//       const productsSnapshot = await item.ref
+//         .collection("ordered_product")
+//         .get();
+
+//       // Create an array of product promises
+//       const productPromises = productsSnapshot.docs.map((product) => {
+//         // Create a promise to add the product data to the products array
+//         return new Promise((resolve) => {
+//           // Create an object for the product
+//           const productsData = {
+//             sku: product.data().SKU,
+//             price: product.data().price,
+//             name: product.data().product_name,
+//             quantity: product.data().quantity,
+//           };
+
+//           // Add the product object to the products array
+//           order.products.push(productsData);
+
+//           // Resolve the promise
+//           resolve();
+//         });
+//       });
+
+//       const addressSnapshot = await item.ref.collection("address").get();
+
+//       const addressPromises = addressSnapshot.docs.map((address) => {
+//         // Create a promise to add the product data to the products array
+//         return new Promise((resolve) => {
+//           // Create an object for the product
+//           const addressData = {
+//             address_id: address.id,
+//             addr1: address.data().addr1,
+//             addr2: address.data().addr2,
+//             city: address.data().city,
+//             postcode: address.data().postcode,
+//             receiver_name: address.data().receiver_name,
+//             receiver_tel: address.data().receiver_tel,
+//             state: address.data().state,
+//           };
+
+//           // Add the product object to the products array
+//           order.address.push(addressData);
+
+//           // Resolve the promise
+//           resolve();
+//         });
+//       });
+
+//       // Wait for all of the product promises to resolve
+//       await Promise.all(productPromises);
+//       await Promise.all(addressPromises);
+//       // console.log("productPromises" + productPromises);
+
+//       // Return the order object
+//       return order;
+//     });
+
+//     // Wait for all of the order promises to resolve
+//     const resolvedOrders = await Promise.all(orderPromises);
+
+//     // Add the resolved orders to the orders array
+//     // orders.push(...resolvedOrders);
+//     // console.log("RESOLVED ORDERS: " + JSON.stringify(resolvedOrders));
+
+//     // Iterate over the resolved orders
+//     for (const order of resolvedOrders) {
+//       // Iterate over the products in each order
+//       for (const product of order.products) {
+//         console.log("product" + JSON.stringify(product));
+//         // Check if the product already exists in the productRanking array
+//         const existingProduct = productRanking.find(
+//           (p) => p.product_name === product.name
+//         );
+//         // console.log("p.sku" + p.sku);
+//         // console.log("product.sku" + product.sku);
+//         if (existingProduct) {
+//           // If the product already exists, update the sales and quantity for that product
+//           existingProduct.sales += product.quantity * product.price;
+//           existingProduct.quantity += parseInt(product.quantity);
+//         } else {
+//           // If the product doesn't exist, create a new object for the product in the productRanking array
+//           productRanking.push({
+//             // product_ranking: currentRank,
+//             product_name: product.name,
+//             sales: product.quantity * product.price,
+//             quantity: parseInt(product.quantity),
+//           });
+//           // Increment currentRank by 1
+//           // currentRank++;
+//         }
+//         // Create an object for the ordered product with the product name, quantity, and sales
+//         let orderedProducts = {
+//           sku: product.sku,
+//           product_name: product.name,
+//           quantity: product.quantity,
+//           sales: product.quantity * product.price,
+//         };
+
+//         // console.log("productRanking" + productRanking);
+//       }
+//     }
+
+//     // Now that you have an array of all the ordered products, you can sort it by sales and return the sorted array as the response
+//   };
+
+//   // Call the async function
+//   await addOrderData();
+
+//   // console.log(JSON.stringify(orderedProducts, null, 2));
+//   // console.log("Number of orders:", orderedProducts.length);
+//   // console.log("GET all orders successfully");
+
+//   // console.log("orderedProduct" + orderedProducts);
+//   // res.json(orderedProducts);
+
+//   // console.log(JSON.stringify(productRanking, null, 2));
+//   // console.log("Number of orders:", productRanking.length);
+//   // console.log("GET all orders successfully");
+//   productRanking.sort((a, b) => b.sales - a.sales);
+//   let rank = 1;
+//   productRanking.forEach((product) => {
+//     product.product_ranking = rank;
+//     rank++;
+//     product.sales = "RM " + product.sales.toFixed(2);
+//   });
+
+//   res.json(productRanking);
+// });
+
 // GET ALL ORDER - FOR MY ORDER PAGE
 app.get("/getProductRanking", async (req, res) => {
   // Get a reference to the orders collection
   const ordersRef = db.collection("order");
-
-  // Get the query snapshot for the orders collection
   const ordersSnapshot = await ordersRef.get();
-  // console.log("Orders snapshot:", ordersSnapshot);
-
-  // Initialize an array to hold the order objects
-  const orders = [];
   const productRanking = [];
-  // Initialize a new array to hold the ordered products
-  let orderedProducts = [];
-
-  // variables to calculate product ranking
-
-  let currentRank = 1;
 
   // Wrap the loop in an async function
   const addOrderData = async () => {
@@ -1152,12 +1364,6 @@ app.get("/getProductRanking", async (req, res) => {
         address: [],
         order_number: ordersSnapshot.size,
       };
-
-      // order.push({ salesRevenue: sum });
-
-      // console.log(
-      //   "dayjs " + dayjs(item.data().order_date).format("DD MMM YYYY")
-      // );
 
       // Get the query snapshot for the products subcollection
       const productsSnapshot = await item.ref
@@ -1221,10 +1427,6 @@ app.get("/getProductRanking", async (req, res) => {
     // Wait for all of the order promises to resolve
     const resolvedOrders = await Promise.all(orderPromises);
 
-    // Add the resolved orders to the orders array
-    // orders.push(...resolvedOrders);
-    // console.log("RESOLVED ORDERS: " + JSON.stringify(resolvedOrders));
-
     // Iterate over the resolved orders
     for (const order of resolvedOrders) {
       // Iterate over the products in each order
@@ -1234,8 +1436,6 @@ app.get("/getProductRanking", async (req, res) => {
         const existingProduct = productRanking.find(
           (p) => p.product_name === product.name
         );
-        // console.log("p.sku" + p.sku);
-        // console.log("product.sku" + product.sku);
         if (existingProduct) {
           // If the product already exists, update the sales and quantity for that product
           existingProduct.sales += product.quantity * product.price;
@@ -1248,37 +1448,12 @@ app.get("/getProductRanking", async (req, res) => {
             sales: product.quantity * product.price,
             quantity: parseInt(product.quantity),
           });
-          // Increment currentRank by 1
-          // currentRank++;
         }
-        // Create an object for the ordered product with the product name, quantity, and sales
-        let orderedProducts = {
-          sku: product.sku,
-          product_name: product.name,
-          quantity: product.quantity,
-          sales: product.quantity * product.price,
-        };
-
-        // console.log("productRanking" + productRanking);
       }
     }
-
-    // Now that you have an array of all the ordered products, you can sort it by sales and return the sorted array as the response
   };
-
-  // Call the async function
   await addOrderData();
 
-  // console.log(JSON.stringify(orderedProducts, null, 2));
-  // console.log("Number of orders:", orderedProducts.length);
-  // console.log("GET all orders successfully");
-
-  // console.log("orderedProduct" + orderedProducts);
-  // res.json(orderedProducts);
-
-  // console.log(JSON.stringify(productRanking, null, 2));
-  // console.log("Number of orders:", productRanking.length);
-  // console.log("GET all orders successfully");
   productRanking.sort((a, b) => b.sales - a.sales);
   let rank = 1;
   productRanking.forEach((product) => {
@@ -1290,69 +1465,69 @@ app.get("/getProductRanking", async (req, res) => {
   res.json(productRanking);
 });
 
-app.post("/register", async (req, res) => {
-  const seller_name = req.body.seller_name;
-  const seller_email = req.body.seller_email;
-  const seller_username = req.body.seller_username;
-  const seller_password = req.body.seller_password;
+// app.post("/register", async (req, res) => {
+//   const seller_name = req.body.seller_name;
+//   const seller_email = req.body.seller_email;
+//   const seller_username = req.body.seller_username;
+//   const seller_password = req.body.seller_password;
 
-  const shop_name = req.body.shop_name;
-  const shop_rating = 0.0;
-  const shop_tel = req.body.shop_tel;
-  const shop_open = req.body.shop_open;
-  const shop_close = req.body.shop_close;
-  const shop_addr1 = req.body.shop_addr1;
-  const shop_addr2 = req.body.shop_addr2;
-  const shop_city = req.body.shop_city;
-  const shop_postcode = req.body.shop_postcode;
-  const shop_state = req.body.shop_state;
-  const shop_latitude = req.body.shop_latitude;
-  const shop_longitude = req.body.shop_longitude;
+//   const shop_name = req.body.shop_name;
+//   const shop_rating = 0.0;
+//   const shop_tel = req.body.shop_tel;
+//   const shop_open = req.body.shop_open;
+//   const shop_close = req.body.shop_close;
+//   const shop_addr1 = req.body.shop_addr1;
+//   const shop_addr2 = req.body.shop_addr2;
+//   const shop_city = req.body.shop_city;
+//   const shop_postcode = req.body.shop_postcode;
+//   const shop_state = req.body.shop_state;
+//   const shop_latitude = req.body.shop_latitude;
+//   const shop_longitude = req.body.shop_longitude;
 
-  try {
-    const { user } = await auth.createUser({
-      email: seller_email,
-      password: seller_password,
-      displayName: seller_username,
-    });
+//   try {
+//     const { user } = await auth.createUser({
+//       email: seller_email,
+//       password: seller_password,
+//       displayName: seller_username,
+//     });
 
-    const shopRef = db.collection("shop");
-    const currentCount = (await shopRef.get()).size;
-    let count = currentCount;
-    count++;
-    let shopid = "SH0000" + count;
+//     const shopRef = db.collection("shop");
+//     const currentCount = (await shopRef.get()).size;
+//     let count = currentCount;
+//     count++;
+//     let shopid = "SH0000" + count;
 
-    // Insert additional data into Firestore
-    await db.collection("seller").doc(seller_email).set({
-      seller_name: seller_name,
-      seller_username: seller_username,
-      seller_email: seller_email,
-      shop_id: shopid,
-    });
+//     // Insert additional data into Firestore
+//     await db.collection("seller").doc(seller_email).set({
+//       seller_name: seller_name,
+//       seller_username: seller_username,
+//       seller_email: seller_email,
+//       shop_id: shopid,
+//     });
 
-    // Insert additional data into Firestore
-    await db.collection("shop").doc(shopid).set({
-      shop_owner: seller_name,
-      shop_name: shop_name,
-      shop_rating: shop_rating,
-      shop_tel: shop_tel,
-      shop_open: shop_open,
-      shop_close: shop_close,
-      shop_addr1: shop_addr1,
-      shop_addr2: shop_addr2,
-      shop_city: shop_city,
-      shop_postcode: shop_postcode,
-      shop_state: shop_state,
-      shop_latitude: shop_latitude,
-      shop_longitude: shop_longitude,
-    });
-    res.redirect("/login");
-    // res.send("User registered successfully!");
-    // res.sendFile(path.resolve(__dirname, "../client/login.html"));
-  } catch (error) {
-    res.send("Error: " + error);
-  }
-});
+//     // Insert additional data into Firestore
+//     await db.collection("shop").doc(shopid).set({
+//       shop_owner: seller_name,
+//       shop_name: shop_name,
+//       shop_rating: shop_rating,
+//       shop_tel: shop_tel,
+//       shop_open: shop_open,
+//       shop_close: shop_close,
+//       shop_addr1: shop_addr1,
+//       shop_addr2: shop_addr2,
+//       shop_city: shop_city,
+//       shop_postcode: shop_postcode,
+//       shop_state: shop_state,
+//       shop_latitude: shop_latitude,
+//       shop_longitude: shop_longitude,
+//     });
+//     res.redirect("/login");
+//     // res.send("User registered successfully!");
+//     // res.sendFile(path.resolve(__dirname, "../client/login.html"));
+//   } catch (error) {
+//     res.send("Error: " + error);
+//   }
+// });
 
 app.get("/getShop", (req, res) => {
   const auth = getAuth();

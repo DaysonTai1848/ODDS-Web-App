@@ -585,7 +585,6 @@
           data: { id: id, order_status: order_status },
           success: function (response) {
             // Reload the DataTable using the ajax.reload() method
-            // table.ajax.reload();
             $("#table").DataTable().ajax.reload();
           },
         });

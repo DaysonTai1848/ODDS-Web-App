@@ -313,7 +313,6 @@
               class="btn-add-stock me-3 btn btn-outline-dark btn-rounded bg-white text-dark hover:bg-purple hover:text-white"
               data-bs-toggle="modal"
               id="addStockModalBtn"
-              style="display: none"
             >
               Add Stock
             </button>
@@ -422,20 +421,11 @@
             ></button>
           </div>
           <div class="modal-body">
-            <form id="add-stock-modal-content" action="/addStock" method="PUT">
-              <div class="mb-3">
-                <label for="recipient-name" class="col-form-label"
-                  >Recipient:</label
-                >
-                <input type="text" class="form-control" id="recipient-name" />
-              </div>
-              <div class="mb-3">
-                <label for="message-text" class="col-form-label"
-                  >Message:</label
-                >
-                <textarea class="form-control" id="message-text"></textarea>
-              </div>
-            </form>
+            <form
+              id="add-stock-modal-content"
+              action="/addStock"
+              method="PUT"
+            ></form>
           </div>
           <div class="modal-footer">
             <button
@@ -592,17 +582,32 @@
             });
 
             $("#addStockModalBtn").click(function () {
-              // console.log("table" + JSON.stringify(table));
-              // var data = table.rows({ selected: true }).data();
-              // console.log("data: " + JSON.stringify(data));
+              // Get Order ID of all selected data
+              // console.log("Clicked");
+
+              // // Get the selected rows
+              // var selectedRows = table.rows(".selected").data();
+              // // console.log("Selected Rows: " + JSON.stringify(selectedRows));
+              // console.log("Selected Rows Length: " + selectedRows.length);
+
+              // // Create an array to store the data from the second column
+              // var orderIdData = [];
+
+              // // Loop through the selected rows
+              // var orderIdData = selectedRows.map(function (row) {
+              //   return row[1];
+              // });
+              // console.log("Order ID: " + orderIdData);
+
               $("#add-stock-modal-content").empty();
 
               // Get the data for the selected rows
               var selectedData = table.rows(".selected").data();
-              var selectedProducts = $.map(selectedData, function (row) {
+              var selectedProducts = [];
+              selectedProducts = $.map(selectedData, function (row) {
                 return {
-                  product_name: row.product_name,
                   product_id: row.product_id,
+                  product_name: row.product_name,
                 };
               });
               // console.log(JSON.stringify(selectedProducts));
@@ -634,20 +639,55 @@
               });
 
               // Get the data for the selected rows
-              var selectedData = table.rows(".selected").data();
-              console.log(JSON.stringify(selectedData));
+              // var selectedData = table.rows(".selected").data();
+              // console.log(JSON.stringify(selectedData));
 
               $("#addStockModal").modal("show");
 
               // When the submit button is clicked
               $("#add-stock-submit-btn").click(function () {
-                // Get the add_amount for each product
-                for (let i = 0; i < selectedProducts.length; i++) {
-                  let product = selectedProducts[i];
-                  let inputField = $(`#input-${product.product_id}`);
-                  let addAmount = inputField.val();
-                  product.add_amount = addAmount;
-                }
+                // Gather the input fields in an array
+                var inputFields = $(".modal-body input");
+                // console.log("INPUT FIELDS: " + JSON.stringify(inputFields));
+                var inputValues = [];
+
+                // Iterate over the input fields and add the values to the inputValues array
+                inputFields.each(function () {
+                  var inputValue = $(this).val();
+                  inputValues.push(inputValue);
+                });
+
+                // console.log("INPUT VALUES: " + inputValues);
+
+                selectedProducts.forEach((product, index) => {
+                  product.add_stock_amount = inputValues[index];
+                });
+
+                console.log(
+                  "AFTER CLICK SUBMIT: " + JSON.stringify(selectedProducts)
+                );
+
+                $.ajax({
+                  type: "PUT",
+                  url: "/addStock",
+                  data: JSON.stringify(selectedProducts),
+                  contentType: "application/json; charset=utf-8",
+                  success: function (response) {
+                    console.log(response);
+                    $("#table").DataTable().ajax.reload();
+                  },
+                  error: function (error) {
+                    console.log(error);
+                  },
+                });
+
+                // // Get the add_amount for each product
+                // for (let i = 0; i < selectedProducts.length; i++) {
+                //   let product = selectedProducts[i];
+                //   let inputField = $(`#input-${product.product_id}`);
+                //   let addAmount = inputField.val();
+                //   product.add_amount = addAmount;
+                // }
 
                 // // add the add_amount attribute to each product object
                 // const updatedSelectedProducts = selectedProducts.map(
@@ -663,7 +703,7 @@
                 // Close modal
                 $("#addStockModal").modal("hide");
                 // alert(JSON.stringify(selectedProducts));
-                console.log(JSON.stringify(selectedProducts));
+                // console.log(JSON.stringify(selectedProducts));
               });
             });
           },
